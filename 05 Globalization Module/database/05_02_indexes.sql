@@ -51,3 +51,11 @@ CREATE INDEX ix_ph_lookup_values_active
 -- Security assignment indexes
 ------------------------------------------------------------
 
+CREATE INDEX ix_ph_glob_err_log_date
+    ON ph_globalization_error_log ( error_date DESC );
+
+CREATE INDEX ix_ph_glob_err_log_unit
+    ON ph_globalization_error_log ( program_unit, error_date DESC );
+
+CREATE INDEX ix_ph_glob_err_log_code
+    ON ph_globalization_error_log ( error_code, error_date DESC );

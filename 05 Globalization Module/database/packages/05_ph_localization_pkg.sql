@@ -66,6 +66,14 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
                 WHEN NO_DATA_FOUND THEN
                     RETURN 'en';
                 WHEN OTHERS THEN
+                    ph_globalization_error_log_pkg.log_error(
+                        p_program_unit => $$PLSQL_UNIT || '.normalize_language',
+                        p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
+                        p_error_code => SQLCODE,
+                        p_error_message => SQLERRM,
+                        p_error_stack => DBMS_UTILITY.FORMAT_ERROR_STACK,
+                        p_error_backtrace => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE
+                    );
                     RETURN 'en';
             END;
         END IF;
@@ -96,6 +104,14 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
             END IF;
         EXCEPTION
             WHEN OTHERS THEN
+                ph_globalization_error_log_pkg.log_error(
+                    p_program_unit => $$PLSQL_UNIT || '.normalize_language',
+                    p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
+                    p_error_code => SQLCODE,
+                    p_error_message => SQLERRM,
+                    p_error_stack => DBMS_UTILITY.FORMAT_ERROR_STACK,
+                    p_error_backtrace => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE
+                );
                 NULL;
         END;
 
@@ -130,6 +146,14 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
         RETURN l_username;
     EXCEPTION
         WHEN OTHERS THEN
+            ph_globalization_error_log_pkg.log_error(
+                p_program_unit => $$PLSQL_UNIT || '.current_apex_username',
+                p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
+                p_error_code => SQLCODE,
+                p_error_message => SQLERRM,
+                p_error_stack => DBMS_UTILITY.FORMAT_ERROR_STACK,
+                p_error_backtrace => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE
+            );
             RETURN normalize_username(SYS_CONTEXT('USERENV', 'CLIENT_IDENTIFIER'));
     END current_apex_username;
 
@@ -141,6 +165,14 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
             l_language := V('G_LANG');
         EXCEPTION
             WHEN OTHERS THEN
+                ph_globalization_error_log_pkg.log_error(
+                    p_program_unit => $$PLSQL_UNIT || '.current_language',
+                    p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
+                    p_error_code => SQLCODE,
+                    p_error_message => SQLERRM,
+                    p_error_stack => DBMS_UTILITY.FORMAT_ERROR_STACK,
+                    p_error_backtrace => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE
+                );
                 l_language := NULL;
         END;
 
@@ -163,6 +195,14 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
                 WHEN NO_DATA_FOUND THEN
                     l_language := NULL;
                 WHEN OTHERS THEN
+                    ph_globalization_error_log_pkg.log_error(
+                        p_program_unit => $$PLSQL_UNIT || '.current_language',
+                        p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
+                        p_error_code => SQLCODE,
+                        p_error_message => SQLERRM,
+                        p_error_stack => DBMS_UTILITY.FORMAT_ERROR_STACK,
+                        p_error_backtrace => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE
+                    );
                     l_language := NULL;
             END;
         END IF;
@@ -172,6 +212,14 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
                 l_language := APEX_UTIL.GET_PREFERENCE('FSP_LANGUAGE_PREFERENCE');
             EXCEPTION
                 WHEN OTHERS THEN
+                    ph_globalization_error_log_pkg.log_error(
+                        p_program_unit => $$PLSQL_UNIT || '.current_language',
+                        p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
+                        p_error_code => SQLCODE,
+                        p_error_message => SQLERRM,
+                        p_error_stack => DBMS_UTILITY.FORMAT_ERROR_STACK,
+                        p_error_backtrace => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE
+                    );
                     l_language := NULL;
             END;
         END IF;
@@ -181,6 +229,14 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
                 l_language := APEX_APPLICATION.G_BROWSER_LANGUAGE;
             EXCEPTION
                 WHEN OTHERS THEN
+                    ph_globalization_error_log_pkg.log_error(
+                        p_program_unit => $$PLSQL_UNIT || '.current_language',
+                        p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
+                        p_error_code => SQLCODE,
+                        p_error_message => SQLERRM,
+                        p_error_stack => DBMS_UTILITY.FORMAT_ERROR_STACK,
+                        p_error_backtrace => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE
+                    );
                     l_language := NULL;
             END;
         END IF;
@@ -190,6 +246,14 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
                 l_language := V('APP_LANGUAGE');
             EXCEPTION
                 WHEN OTHERS THEN
+                    ph_globalization_error_log_pkg.log_error(
+                        p_program_unit => $$PLSQL_UNIT || '.current_language',
+                        p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
+                        p_error_code => SQLCODE,
+                        p_error_message => SQLERRM,
+                        p_error_stack => DBMS_UTILITY.FORMAT_ERROR_STACK,
+                        p_error_backtrace => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE
+                    );
                     l_language := NULL;
             END;
         END IF;
@@ -241,6 +305,14 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
                 VALUES (source.user_id, source.preference_code, source.preference_value, source.value_type, 1, l_user_id);
         EXCEPTION
             WHEN OTHERS THEN
+                ph_globalization_error_log_pkg.log_error(
+                    p_program_unit => $$PLSQL_UNIT || '.set_language',
+                    p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
+                    p_error_code => SQLCODE,
+                    p_error_message => SQLERRM,
+                    p_error_stack => DBMS_UTILITY.FORMAT_ERROR_STACK,
+                    p_error_backtrace => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE
+                );
                 NULL;
         END;
     END set_language;

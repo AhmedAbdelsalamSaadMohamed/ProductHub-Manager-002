@@ -578,3 +578,10 @@ COMMENT ON COLUMN ph_i18n_messages.deleted_at IS q'[Timestamp when the row was s
 
 
 PROMPT Bilingual comments applied.
+COMMENT ON TABLE ph_globalization_error_log IS 'Globalization module runtime error log captured from package exception handlers.';
+COMMENT ON COLUMN ph_globalization_error_log.program_unit IS 'PL/SQL package, procedure, function, or runtime unit where the error was handled.';
+COMMENT ON COLUMN ph_globalization_error_log.program_unit_parameters IS 'Serialized parameter values supplied by the caller when available.';
+COMMENT ON COLUMN ph_globalization_error_log.error_location IS 'Formatted PL/SQL error backtrace or other location hint.';
+COMMENT ON COLUMN ph_globalization_error_log.error_stack IS 'Formatted Oracle error stack.';
+COMMENT ON COLUMN ph_globalization_error_log.error_backtrace IS 'Formatted Oracle error backtrace.';
+COMMENT ON COLUMN ph_globalization_error_log.call_stack IS 'Formatted PL/SQL call stack at logging time.';

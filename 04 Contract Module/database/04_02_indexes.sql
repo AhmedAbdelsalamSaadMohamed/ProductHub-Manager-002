@@ -32,3 +32,12 @@ CREATE INDEX ix_ph_erp_cf_contract_active
 
 CREATE INDEX ix_ph_erp_cf_feature
     ON ph_erp_contract_features ( product_id, module_id, platform_id, feature_id, is_deleted, is_active );
+
+CREATE INDEX ix_ph_erp_cont_err_log_date
+    ON ph_erp_contract_error_log ( error_date DESC );
+
+CREATE INDEX ix_ph_erp_cont_err_log_unit
+    ON ph_erp_contract_error_log ( program_unit, error_date DESC );
+
+CREATE INDEX ix_ph_erp_cont_err_log_code
+    ON ph_erp_contract_error_log ( error_code, error_date DESC );

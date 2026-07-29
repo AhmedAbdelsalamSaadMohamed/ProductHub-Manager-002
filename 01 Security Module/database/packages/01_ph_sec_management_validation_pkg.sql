@@ -56,10 +56,10 @@ CREATE OR REPLACE PACKAGE ph_sec_management_validation_pkg AS
     PROCEDURE validate_revoke_user_role(p_user_id IN NUMBER, p_role_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2);
     PROCEDURE validate_restore_user_role(p_user_id IN NUMBER, p_role_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2);
 
-    PROCEDURE validate_create_apex_page_type(p_page_type_code IN VARCHAR2, p_page_type_name_en IN VARCHAR2, p_page_type_name_ar IN VARCHAR2, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2);
-    PROCEDURE validate_update_apex_page_type(p_page_type_id IN NUMBER, p_page_type_code IN VARCHAR2 DEFAULT NULL, p_page_type_name_en IN VARCHAR2 DEFAULT NULL, p_page_type_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2);
-    PROCEDURE validate_delete_apex_page_type(p_page_type_id IN NUMBER, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2);
-    PROCEDURE validate_restore_apex_page_type(p_page_type_id IN NUMBER, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2);
+    PROCEDURE validate_create_apex_page_type(p_page_type_code IN VARCHAR2, p_page_type_name_en IN VARCHAR2, p_page_type_name_ar IN VARCHAR2, p_created_by IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2);
+    PROCEDURE validate_update_apex_page_type(p_page_type_id IN NUMBER, p_page_type_code IN VARCHAR2 DEFAULT NULL, p_page_type_name_en IN VARCHAR2 DEFAULT NULL, p_page_type_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2);
+    PROCEDURE validate_delete_apex_page_type(p_page_type_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2);
+    PROCEDURE validate_restore_apex_page_type(p_page_type_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2);
 
     PROCEDURE validate_create_apex_page(p_apex_app_id IN NUMBER, p_apex_page_no IN NUMBER, p_apex_page_type_id IN NUMBER, p_page_name_en IN VARCHAR2, p_page_name_ar IN VARCHAR2, p_page_alias IN VARCHAR2 DEFAULT NULL, p_object_path IN VARCHAR2 DEFAULT NULL, p_access_mode IN VARCHAR2 DEFAULT 'ANY', p_is_public IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2);
     PROCEDURE validate_update_apex_page(p_apex_page_id IN NUMBER, p_apex_app_id IN NUMBER DEFAULT NULL, p_apex_page_no IN NUMBER DEFAULT NULL, p_apex_page_type_id IN NUMBER DEFAULT NULL, p_page_name_en IN VARCHAR2 DEFAULT NULL, p_page_name_ar IN VARCHAR2 DEFAULT NULL, p_page_alias IN VARCHAR2 DEFAULT NULL, p_object_path IN VARCHAR2 DEFAULT NULL, p_access_mode IN VARCHAR2 DEFAULT NULL, p_is_public IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2);
@@ -692,9 +692,9 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_validation_pkg AS
         IF exists_user_role(p_user_id, p_role_id, 1) = 0 THEN set_invalid(o_is_valid, o_validation_message, 'User role was not found.'); ELSE set_valid(o_is_valid, o_validation_message); END IF;
     END validate_restore_user_role;
 
-    PROCEDURE validate_create_apex_page_type(p_page_type_code IN VARCHAR2, p_page_type_name_en IN VARCHAR2, p_page_type_name_ar IN VARCHAR2, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
+    PROCEDURE validate_create_apex_page_type(p_page_type_code IN VARCHAR2, p_page_type_name_en IN VARCHAR2, p_page_type_name_ar IN VARCHAR2, p_created_by IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'SECURITY_ADMIN', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(p_created_by, 'SECURITY_ADMIN', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         IF text_missing(p_page_type_code) THEN
@@ -708,9 +708,9 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_validation_pkg AS
         END IF;
     END validate_create_apex_page_type;
 
-    PROCEDURE validate_update_apex_page_type(p_page_type_id IN NUMBER, p_page_type_code IN VARCHAR2 DEFAULT NULL, p_page_type_name_en IN VARCHAR2 DEFAULT NULL, p_page_type_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
+    PROCEDURE validate_update_apex_page_type(p_page_type_id IN NUMBER, p_page_type_code IN VARCHAR2 DEFAULT NULL, p_page_type_name_en IN VARCHAR2 DEFAULT NULL, p_page_type_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'SECURITY_ADMIN', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(p_updated_by, 'SECURITY_ADMIN', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         IF exists_apex_page_type(p_page_type_id) = 0 THEN
@@ -736,9 +736,9 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_validation_pkg AS
         END IF;
     END validate_update_apex_page_type;
 
-    PROCEDURE validate_delete_apex_page_type(p_page_type_id IN NUMBER, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
+    PROCEDURE validate_delete_apex_page_type(p_page_type_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'SECURITY_ADMIN', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(p_updated_by, 'SECURITY_ADMIN', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         IF exists_apex_page_type(p_page_type_id) = 0 THEN
@@ -748,9 +748,9 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_validation_pkg AS
         END IF;
     END validate_delete_apex_page_type;
 
-    PROCEDURE validate_restore_apex_page_type(p_page_type_id IN NUMBER, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
+    PROCEDURE validate_restore_apex_page_type(p_page_type_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'SECURITY_ADMIN', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(p_updated_by, 'SECURITY_ADMIN', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         IF exists_apex_page_type(p_page_type_id, 0, 1) = 0 THEN

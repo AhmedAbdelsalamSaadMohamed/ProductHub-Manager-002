@@ -44,3 +44,12 @@ CREATE INDEX ix_ph_erp_features_unit
 
 CREATE INDEX ix_ph_erp_mp_platform
     ON ph_erp_module_platforms ( platform_id, product_id, module_id );
+
+CREATE INDEX ix_ph_erp_prod_err_log_date
+    ON ph_erp_product_error_log ( error_date DESC );
+
+CREATE INDEX ix_ph_erp_prod_err_log_unit
+    ON ph_erp_product_error_log ( program_unit, error_date DESC );
+
+CREATE INDEX ix_ph_erp_prod_err_log_code
+    ON ph_erp_product_error_log ( error_code, error_date DESC );

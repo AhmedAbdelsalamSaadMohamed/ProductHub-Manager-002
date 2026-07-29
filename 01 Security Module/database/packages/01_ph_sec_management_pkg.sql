@@ -1,4 +1,4 @@
-﻿/*
+/*
 ProductHub Manager - Security Management Package
 Target DBMS: Oracle Database 21c+
 
@@ -38,7 +38,7 @@ CREATE OR REPLACE PACKAGE ph_sec_management_pkg AS
     PROCEDURE delete_permission(p_permission_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_permission(p_permission_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
-    PROCEDURE create_user(p_email IN VARCHAR2, p_display_name IN VARCHAR2, p_user_type IN NUMBER, p_customer_id IN NUMBER DEFAULT NULL, p_password IN ph_sec_authentication_pkg.t_password DEFAULT NULL, p_must_change_password IN NUMBER DEFAULT 1, p_is_initial_admin IN NUMBER DEFAULT 0, p_user_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE create_user(p_email IN VARCHAR2, p_display_name IN VARCHAR2, p_user_type IN NUMBER, p_customer_id IN NUMBER DEFAULT NULL, p_password IN VARCHAR2 DEFAULT NULL, p_must_change_password IN NUMBER DEFAULT 1, p_is_initial_admin IN NUMBER DEFAULT 0, p_user_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_user(p_user_id IN NUMBER, p_email IN VARCHAR2 DEFAULT NULL, p_display_name IN VARCHAR2 DEFAULT NULL, p_user_type IN NUMBER DEFAULT NULL, p_customer_id IN NUMBER DEFAULT NULL, p_must_change_password IN NUMBER DEFAULT NULL, p_is_initial_admin IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_user(p_user_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_user(p_user_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
@@ -61,10 +61,10 @@ CREATE OR REPLACE PACKAGE ph_sec_management_pkg AS
     PROCEDURE revoke_user_role(p_user_id IN NUMBER, p_role_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_user_role(p_user_id IN NUMBER, p_role_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
-    PROCEDURE create_apex_page_type(p_page_type_code IN VARCHAR2, p_page_type_name_en IN VARCHAR2, p_page_type_name_ar IN VARCHAR2, p_page_type_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-    PROCEDURE update_apex_page_type(p_page_type_id IN NUMBER, p_page_type_code IN VARCHAR2 DEFAULT NULL, p_page_type_name_en IN VARCHAR2 DEFAULT NULL, p_page_type_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-    PROCEDURE delete_apex_page_type(p_page_type_id IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-    PROCEDURE restore_apex_page_type(p_page_type_id IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE create_apex_page_type(p_page_type_code IN VARCHAR2, p_page_type_name_en IN VARCHAR2, p_page_type_name_ar IN VARCHAR2, p_page_type_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE update_apex_page_type(p_page_type_id IN NUMBER, p_page_type_code IN VARCHAR2 DEFAULT NULL, p_page_type_name_en IN VARCHAR2 DEFAULT NULL, p_page_type_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE delete_apex_page_type(p_page_type_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE restore_apex_page_type(p_page_type_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_apex_page(p_apex_app_id IN NUMBER, p_apex_page_no IN NUMBER, p_apex_page_type_id IN NUMBER, p_page_name_en IN VARCHAR2, p_page_name_ar IN VARCHAR2, p_apex_page_id OUT NUMBER, p_page_alias IN VARCHAR2 DEFAULT NULL, p_object_path IN VARCHAR2 DEFAULT NULL, p_access_mode IN VARCHAR2 DEFAULT 'ANY', p_is_public IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_apex_page(p_apex_page_id IN NUMBER, p_apex_app_id IN NUMBER DEFAULT NULL, p_apex_page_no IN NUMBER DEFAULT NULL, p_apex_page_type_id IN NUMBER DEFAULT NULL, p_page_name_en IN VARCHAR2 DEFAULT NULL, p_page_name_ar IN VARCHAR2 DEFAULT NULL, p_page_alias IN VARCHAR2 DEFAULT NULL, p_object_path IN VARCHAR2 DEFAULT NULL, p_access_mode IN VARCHAR2 DEFAULT NULL, p_is_public IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
@@ -94,14 +94,17 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
         p_page_type_code    IN VARCHAR2 DEFAULT NULL,
         p_page_type_name_en IN VARCHAR2 DEFAULT NULL,
         p_page_type_name_ar IN VARCHAR2 DEFAULT NULL,
-        p_is_active         IN NUMBER DEFAULT NULL
+        p_is_active         IN NUMBER DEFAULT NULL,
+        p_updated_by        IN NUMBER DEFAULT NULL
     ) IS
     BEGIN
         UPDATE ph_sec_apex_page_type_lkp
             SET apex_page_type_code = CASE WHEN p_page_type_code IS NOT NULL THEN UPPER(TRIM(p_page_type_code)) ELSE apex_page_type_code END,
                 apex_page_type_name_en = CASE WHEN p_page_type_name_en IS NOT NULL THEN TRIM(p_page_type_name_en) ELSE apex_page_type_name_en END,
                 apex_page_type_name_ar = CASE WHEN p_page_type_name_ar IS NOT NULL THEN TRIM(p_page_type_name_ar) ELSE apex_page_type_name_ar END,
-                is_active = CASE WHEN p_is_active IS NOT NULL THEN p_is_active ELSE is_active END
+                is_active = CASE WHEN p_is_active IS NOT NULL THEN p_is_active ELSE is_active END,
+                updated_by = p_updated_by,
+                updated_at = SYSTIMESTAMP
             WHERE apex_page_type_id = p_page_type_id
                 AND is_deleted = 0
                 AND ((p_page_type_code IS NOT NULL AND DECODE(apex_page_type_code, UPPER(TRIM(p_page_type_code)), 0, 1) = 1)
@@ -111,21 +114,31 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
 
     END do_update_apex_page_type;
 
-    PROCEDURE do_delete_apex_page_type (p_page_type_id IN NUMBER) IS
+    PROCEDURE do_delete_apex_page_type (
+        p_page_type_id IN NUMBER,
+        p_updated_by   IN NUMBER DEFAULT NULL
+    ) IS
     BEGIN
         UPDATE ph_sec_apex_page_type_lkp
-            SET is_deleted = 1
+            SET is_deleted = 1,
+                deleted_by = p_updated_by,
+                deleted_at = SYSTIMESTAMP
             WHERE apex_page_type_id = p_page_type_id
                 AND is_deleted = 0;
 
     END do_delete_apex_page_type;
 
-    PROCEDURE do_restore_apex_page_type (p_page_type_id IN NUMBER) IS
+    PROCEDURE do_restore_apex_page_type (
+        p_page_type_id IN NUMBER,
+        p_updated_by   IN NUMBER DEFAULT NULL
+    ) IS
     BEGIN
         UPDATE ph_sec_apex_page_type_lkp
             SET is_deleted = 0,
                 deleted_by = NULL,
-                deleted_at = NULL
+                deleted_at = NULL,
+                updated_by = p_updated_by,
+                updated_at = SYSTIMESTAMP
             WHERE apex_page_type_id = p_page_type_id;
 
     END do_restore_apex_page_type;
@@ -267,9 +280,21 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     END set_validation_error;
 
     PROCEDURE set_error(p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_error_code      NUMBER := SQLCODE;
+        l_error_message   VARCHAR2(4000) := SQLERRM;
+        l_error_stack     CLOB := DBMS_UTILITY.FORMAT_ERROR_STACK;
+        l_error_backtrace CLOB := DBMS_UTILITY.FORMAT_ERROR_BACKTRACE;
     BEGIN
-        p_result_code := CASE WHEN SQLCODE BETWEEN -20999 AND -20000 THEN 'V' ELSE 'E' END;
-        p_result_message := SQLERRM;
+        ph_sec_error_log_pkg.log_error(
+            p_program_unit => $$PLSQL_UNIT,
+            p_error_location => l_error_backtrace,
+            p_error_code => l_error_code,
+            p_error_message => l_error_message,
+            p_error_stack => l_error_stack,
+            p_error_backtrace => l_error_backtrace
+        );
+        p_result_code := CASE WHEN l_error_code BETWEEN -20999 AND -20000 THEN 'V' ELSE 'E' END;
+        p_result_message := l_error_message;
     END set_error;
 
     ----------------------------------------------------------------------
@@ -652,15 +677,26 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
             set_error(p_result_code, p_result_message);
     END restore_permission;
 
-    PROCEDURE create_user(p_email IN VARCHAR2, p_display_name IN VARCHAR2, p_user_type IN NUMBER, p_customer_id IN NUMBER DEFAULT NULL, p_password IN ph_sec_authentication_pkg.t_password DEFAULT NULL, p_must_change_password IN NUMBER DEFAULT 1, p_is_initial_admin IN NUMBER DEFAULT 0, p_user_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+    PROCEDURE create_user(p_email IN VARCHAR2, p_display_name IN VARCHAR2, p_user_type IN NUMBER, p_customer_id IN NUMBER DEFAULT NULL, p_password IN VARCHAR2 DEFAULT NULL, p_must_change_password IN NUMBER DEFAULT 1, p_is_initial_admin IN NUMBER DEFAULT 0, p_user_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
         l_validation_message VARCHAR2(4000);
     BEGIN
+        p_user_id := NULL;
+
         ph_sec_management_validation_pkg.validate_create_user(p_email, p_display_name, p_user_type, p_customer_id, p_must_change_password, p_is_initial_admin, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
             set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
+
+        IF p_password IS NOT NULL THEN
+            ph_sec_authentication_validation_pkg.validate_password(p_password, l_is_valid, l_validation_message);
+            IF l_is_valid = 0 THEN
+                set_validation_error(p_result_code, p_result_message, l_validation_message);
+                RETURN;
+            END IF;
+        END IF;
+
         INSERT INTO ph_sec_users (customer_id, user_type, email, display_name, must_change_password, is_initial_admin, is_active, created_by)
             VALUES (p_customer_id, p_user_type, normalize_username(p_email), TRIM(p_display_name), p_must_change_password, p_is_initial_admin, 1, NVL(p_created_by, 1))
             RETURNING user_id INTO p_user_id;
@@ -1008,11 +1044,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     ----------------------------------------------------------------------
     -- APEX Security Entity Management
     ----------------------------------------------------------------------
-    PROCEDURE create_apex_page_type(p_page_type_code IN VARCHAR2, p_page_type_name_en IN VARCHAR2, p_page_type_name_ar IN VARCHAR2, p_page_type_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+    PROCEDURE create_apex_page_type(p_page_type_code IN VARCHAR2, p_page_type_name_en IN VARCHAR2, p_page_type_name_ar IN VARCHAR2, p_page_type_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
         l_validation_message VARCHAR2(4000);
     BEGIN
-        ph_sec_management_validation_pkg.validate_create_apex_page_type(p_page_type_code, p_page_type_name_en, p_page_type_name_ar, l_is_valid, l_validation_message);
+        ph_sec_management_validation_pkg.validate_create_apex_page_type(p_page_type_code, p_page_type_name_en, p_page_type_name_ar, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
             set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
@@ -1029,7 +1065,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
         TRIM(p_page_type_name_en),
         TRIM(p_page_type_name_ar),
         1,
-        1
+        NVL(p_created_by, 1)
         ) RETURNING apex_page_type_id INTO p_page_type_id;
 
         set_success(p_result_code, p_result_message, 'APEX page type created successfully.');
@@ -1038,48 +1074,48 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
             set_error(p_result_code, p_result_message);
     END create_apex_page_type;
 
-    PROCEDURE update_apex_page_type(p_page_type_id IN NUMBER, p_page_type_code IN VARCHAR2 DEFAULT NULL, p_page_type_name_en IN VARCHAR2 DEFAULT NULL, p_page_type_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+    PROCEDURE update_apex_page_type(p_page_type_id IN NUMBER, p_page_type_code IN VARCHAR2 DEFAULT NULL, p_page_type_name_en IN VARCHAR2 DEFAULT NULL, p_page_type_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
         l_validation_message VARCHAR2(4000);
     BEGIN
-        ph_sec_management_validation_pkg.validate_update_apex_page_type(p_page_type_id, p_page_type_code, p_page_type_name_en, p_page_type_name_ar, p_is_active, l_is_valid, l_validation_message);
+        ph_sec_management_validation_pkg.validate_update_apex_page_type(p_page_type_id, p_page_type_code, p_page_type_name_en, p_page_type_name_ar, p_is_active, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
             set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
-        do_update_apex_page_type(p_page_type_id, p_page_type_code, p_page_type_name_en, p_page_type_name_ar, p_is_active);
+        do_update_apex_page_type(p_page_type_id, p_page_type_code, p_page_type_name_en, p_page_type_name_ar, p_is_active, p_updated_by);
         set_success(p_result_code, p_result_message, 'APEX page type updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END update_apex_page_type;
 
-    PROCEDURE delete_apex_page_type(p_page_type_id IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+    PROCEDURE delete_apex_page_type(p_page_type_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
         l_validation_message VARCHAR2(4000);
     BEGIN
-        ph_sec_management_validation_pkg.validate_delete_apex_page_type(p_page_type_id, l_is_valid, l_validation_message);
+        ph_sec_management_validation_pkg.validate_delete_apex_page_type(p_page_type_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
             set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
-        do_delete_apex_page_type(p_page_type_id);
+        do_delete_apex_page_type(p_page_type_id, p_updated_by);
         set_success(p_result_code, p_result_message, 'APEX page type deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END delete_apex_page_type;
 
-    PROCEDURE restore_apex_page_type(p_page_type_id IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+    PROCEDURE restore_apex_page_type(p_page_type_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
         l_validation_message VARCHAR2(4000);
     BEGIN
-        ph_sec_management_validation_pkg.validate_restore_apex_page_type(p_page_type_id, l_is_valid, l_validation_message);
+        ph_sec_management_validation_pkg.validate_restore_apex_page_type(p_page_type_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
             set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
-        do_restore_apex_page_type(p_page_type_id);
+        do_restore_apex_page_type(p_page_type_id, p_updated_by);
         set_success(p_result_code, p_result_message, 'APEX page type restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN

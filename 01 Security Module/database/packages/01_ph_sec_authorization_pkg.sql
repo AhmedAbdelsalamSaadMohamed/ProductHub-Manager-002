@@ -217,11 +217,8 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authorization_pkg AS
         o_is_valid              OUT NUMBER,
         o_validation_message    OUT VARCHAR2
     ) RETURN NUMBER IS
-        l_user_id NUMBER;
     BEGIN
-        l_user_id := COALESCE(p_user_id, ph_sec_authentication_pkg.get_user_id);
-
-        IF l_user_id IS NULL THEN
+        IF p_user_id IS NULL THEN
             set_invalid(
                 o_is_valid,
                 o_validation_message,
@@ -231,7 +228,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authorization_pkg AS
                 )
             );
             RETURN 0;
-        ELSIF user_is_authenticated(l_user_id) = 0 THEN
+        ELSIF user_is_authenticated(p_user_id) = 0 THEN
             set_invalid(
                 o_is_valid,
                 o_validation_message,
@@ -241,7 +238,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authorization_pkg AS
                 )
             );
             RETURN 0;
-        ELSIF user_has_permission(l_user_id, p_object_name, p_action_name) = 0 THEN
+        ELSIF user_has_permission(p_user_id, p_object_name, p_action_name) = 0 THEN
             set_invalid(
                 o_is_valid,
                 o_validation_message,

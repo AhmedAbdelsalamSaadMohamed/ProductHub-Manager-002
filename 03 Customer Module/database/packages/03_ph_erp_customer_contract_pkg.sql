@@ -1028,9 +1028,21 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
     END set_success;
 
     PROCEDURE set_error(p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_error_code      NUMBER := SQLCODE;
+        l_error_message   VARCHAR2(4000) := SQLERRM;
+        l_error_stack     CLOB := DBMS_UTILITY.FORMAT_ERROR_STACK;
+        l_error_backtrace CLOB := DBMS_UTILITY.FORMAT_ERROR_BACKTRACE;
     BEGIN
-        p_result_code := CASE WHEN SQLCODE BETWEEN -20999 AND -20000 THEN 'V' ELSE 'E' END;
-        p_result_message := SQLERRM;
+        ph_erp_customer_error_log_pkg.log_error(
+            p_program_unit => $$PLSQL_UNIT,
+            p_error_location => l_error_backtrace,
+            p_error_code => l_error_code,
+            p_error_message => l_error_message,
+            p_error_stack => l_error_stack,
+            p_error_backtrace => l_error_backtrace
+        );
+        p_result_code := CASE WHEN l_error_code BETWEEN -20999 AND -20000 THEN 'V' ELSE 'E' END;
+        p_result_message := l_error_message;
     END set_error;
 
     PROCEDURE create_customer(p_customer_name IN VARCHAR2, p_legal_name IN VARCHAR2 DEFAULT NULL, p_contact_email IN VARCHAR2 DEFAULT NULL, p_contact_phone IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_customer_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS

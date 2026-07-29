@@ -83,3 +83,12 @@ CREATE INDEX ix_ph_sec_rp_permission
 
 CREATE INDEX ix_ph_sec_ur_role
     ON ph_sec_user_roles ( is_deleted, role_id, user_id );
+
+CREATE INDEX ix_ph_sec_error_log_date
+    ON ph_sec_error_log ( error_date DESC );
+
+CREATE INDEX ix_ph_sec_error_log_unit
+    ON ph_sec_error_log ( program_unit, error_date DESC );
+
+CREATE INDEX ix_ph_sec_error_log_code
+    ON ph_sec_error_log ( error_code, error_date DESC );

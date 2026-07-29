@@ -486,3 +486,10 @@ COMMENT ON COLUMN ph_sec_user_roles.is_deleted IS q'[Soft delete flag. 0 means v
 COMMENT ON COLUMN ph_sec_user_roles.deleted_by IS q'[User identifier that soft-deleted the row.]';
 
 COMMENT ON COLUMN ph_sec_user_roles.deleted_at IS q'[Timestamp when the row was soft-deleted.]';
+COMMENT ON TABLE ph_sec_error_log IS 'Security module runtime error log captured from package exception handlers.';
+COMMENT ON COLUMN ph_sec_error_log.program_unit IS 'PL/SQL package, procedure, function, or runtime unit where the error was handled.';
+COMMENT ON COLUMN ph_sec_error_log.program_unit_parameters IS 'Serialized parameter values supplied by the caller when available.';
+COMMENT ON COLUMN ph_sec_error_log.error_location IS 'Formatted PL/SQL error backtrace or other location hint.';
+COMMENT ON COLUMN ph_sec_error_log.error_stack IS 'Formatted Oracle error stack.';
+COMMENT ON COLUMN ph_sec_error_log.error_backtrace IS 'Formatted Oracle error backtrace.';
+COMMENT ON COLUMN ph_sec_error_log.call_stack IS 'Formatted PL/SQL call stack at logging time.';

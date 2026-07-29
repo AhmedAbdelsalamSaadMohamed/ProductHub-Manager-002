@@ -1,4 +1,4 @@
-﻿/*
+/*
 ProductHub Manager - ERP Management Validation Package
 Target DBMS: Oracle Database 21c+
 
@@ -249,7 +249,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_validation_pkg AS
 
     PROCEDURE validate_create_platform(p_platform_name_en IN VARCHAR2, p_platform_name_ar IN VARCHAR2, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(1, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         validate_name_pair(p_platform_name_en, p_platform_name_ar, 'Platform', 'Platform', 100, o_is_valid, o_validation_message);
@@ -263,7 +263,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_validation_pkg AS
 
     PROCEDURE validate_update_platform(p_platform_id IN NUMBER, p_platform_name_en IN VARCHAR2 DEFAULT NULL, p_platform_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(1, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         IF exists_platform(p_platform_id) = 0 THEN
@@ -283,7 +283,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_validation_pkg AS
 
     PROCEDURE validate_delete_platform(p_platform_id IN NUMBER, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(1, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         IF exists_platform(p_platform_id) = 0 THEN
@@ -295,7 +295,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_validation_pkg AS
 
     PROCEDURE validate_restore_platform(p_platform_id IN NUMBER, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(1, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         IF exists_platform(p_platform_id, 1) = 0 THEN
@@ -307,7 +307,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_validation_pkg AS
 
     PROCEDURE validate_create_pricing_unit(p_pricing_unit_name_en IN VARCHAR2, p_pricing_unit_name_ar IN VARCHAR2, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(1, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         validate_name_pair(p_pricing_unit_name_en, p_pricing_unit_name_ar, 'Pricing unit', 'Pricing unit', 100, o_is_valid, o_validation_message);
@@ -315,7 +315,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_validation_pkg AS
 
     PROCEDURE validate_update_pricing_unit(p_pricing_unit_id IN NUMBER, p_pricing_unit_name_en IN VARCHAR2 DEFAULT NULL, p_pricing_unit_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(1, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         IF exists_pricing_unit(p_pricing_unit_id) = 0 THEN
@@ -329,7 +329,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_validation_pkg AS
 
     PROCEDURE validate_delete_pricing_unit(p_pricing_unit_id IN NUMBER, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(1, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         IF exists_pricing_unit(p_pricing_unit_id) = 0 THEN
@@ -341,7 +341,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_validation_pkg AS
 
     PROCEDURE validate_restore_pricing_unit(p_pricing_unit_id IN NUMBER, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(1, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         IF exists_pricing_unit(p_pricing_unit_id, 1) = 0 THEN
@@ -353,7 +353,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_validation_pkg AS
 
     PROCEDURE validate_create_payment_cycle(p_payment_cycle_name_en IN VARCHAR2, p_payment_cycle_name_ar IN VARCHAR2, p_months_count IN NUMBER, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(1, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         validate_name_pair(p_payment_cycle_name_en, p_payment_cycle_name_ar, 'Payment cycle', 'Payment cycle', 100, o_is_valid, o_validation_message);
@@ -364,7 +364,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_validation_pkg AS
 
     PROCEDURE validate_update_payment_cycle(p_payment_cycle_id IN NUMBER, p_payment_cycle_name_en IN VARCHAR2 DEFAULT NULL, p_payment_cycle_name_ar IN VARCHAR2 DEFAULT NULL, p_months_count IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(1, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         IF exists_payment_cycle(p_payment_cycle_id) = 0 THEN
@@ -380,7 +380,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_validation_pkg AS
 
     PROCEDURE validate_delete_payment_cycle(p_payment_cycle_id IN NUMBER, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(1, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         IF exists_payment_cycle(p_payment_cycle_id) = 0 THEN
@@ -392,7 +392,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_validation_pkg AS
 
     PROCEDURE validate_restore_payment_cycle(p_payment_cycle_id IN NUMBER, o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
     BEGIN
-        IF ph_sec_authorization_pkg.permission_is_valid(NULL, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
+        IF ph_sec_authorization_pkg.permission_is_valid(1, 'PLATFORM_SETUP', 'MANAGE', o_is_valid, o_validation_message) = 0 THEN
             RETURN;
         END IF;
         IF exists_payment_cycle(p_payment_cycle_id, 1) = 0 THEN

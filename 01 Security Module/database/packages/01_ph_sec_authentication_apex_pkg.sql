@@ -8,31 +8,15 @@ Purpose:
 
 Authentication Function Name: ph_sec_authentication_apex_pkg.authenticate_user
 Sentry Function Name: ph_sec_authentication_apex_pkg.sentry_function
-Pre-Authentication Procedure Name: ph_sec_authentication_apex_pkg.pre_authentication
-Post-Authentication Procedure Name: ph_sec_authentication_apex_pkg.post_authentication
-Invalid Session Procedure Name: ph_sec_authentication_apex_pkg.invalid_session
-Post Logout Procedure Name: ph_sec_authentication_apex_pkg.post_logout
 */
 
 CREATE OR REPLACE PACKAGE ph_sec_authentication_apex_pkg AS
     FUNCTION authenticate_user(
-        p_username IN ph_sec_authentication_pkg.t_username,
-        p_password IN ph_sec_authentication_pkg.t_password
+        p_username IN VARCHAR2,
+        p_password IN VARCHAR2
         ) RETURN BOOLEAN;
 
     FUNCTION sentry_function RETURN BOOLEAN;
-
-    PROCEDURE pre_authentication(
-        p_username IN ph_sec_authentication_pkg.t_username DEFAULT NULL
-        );
-
-    PROCEDURE post_authentication(
-        p_username IN ph_sec_authentication_pkg.t_username DEFAULT NULL
-        );
-
-    PROCEDURE invalid_session;
-
-    PROCEDURE post_logout;
 
     FUNCTION navigation_menu_sql RETURN VARCHAR2;
 END ph_sec_authentication_apex_pkg;
@@ -51,28 +35,33 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_apex_pkg AS
         APEX_APPLICATION.G_USER,
         V('P9999_USERNAME'),
         V('P101_USERNAME'),
-        V('APP_USER'),
-        SYS_CONTEXT('APEX$SESSION', 'APP_USER'),
-        SYS_CONTEXT('USERENV', 'CLIENT_IDENTIFIER')
+        V('APP_USER')
         ));
 
         IF l_username IN ('nobody', 'apex_public_user') THEN
             l_username := normalize_username(COALESCE(
             V('P9999_USERNAME'),
-            V('P101_USERNAME'),
-            SYS_CONTEXT('USERENV', 'CLIENT_IDENTIFIER')
+            V('P101_USERNAME')
             ));
         END IF;
 
         RETURN l_username;
     EXCEPTION
         WHEN OTHERS THEN
-            RETURN normalize_username(SYS_CONTEXT('USERENV', 'CLIENT_IDENTIFIER'));
+            ph_sec_error_log_pkg.log_error(
+                p_program_unit => $$PLSQL_UNIT || '.current_apex_username',
+                p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
+                p_error_code => SQLCODE,
+                p_error_message => SQLERRM,
+                p_error_stack => DBMS_UTILITY.FORMAT_ERROR_STACK,
+                p_error_backtrace => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE
+            );
+            RETURN NULL;
     END current_apex_username;
 
     FUNCTION authenticate_user(
-        p_username IN ph_sec_authentication_pkg.t_username,
-        p_password IN ph_sec_authentication_pkg.t_password
+        p_username IN VARCHAR2,
+        p_password IN VARCHAR2
     ) RETURN BOOLEAN IS
     BEGIN
         RETURN ph_sec_authentication_pkg.authenticate_user(p_username, p_password);
@@ -88,45 +77,19 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_apex_pkg AS
         RETURN FALSE;
         END IF;
 
-        IF ph_sec_authentication_pkg.is_user_active(l_username) THEN
-            ph_sec_authentication_pkg.set_security_context(l_username);
-            RETURN TRUE;
-        END IF;
-
-        RETURN FALSE;
+        RETURN ph_sec_authentication_pkg.is_user_active(l_username);
     EXCEPTION
         WHEN OTHERS THEN
-            ph_sec_authentication_pkg.clear_security_context;
+            ph_sec_error_log_pkg.log_error(
+                p_program_unit => $$PLSQL_UNIT || '.sentry_function',
+                p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
+                p_error_code => SQLCODE,
+                p_error_message => SQLERRM,
+                p_error_stack => DBMS_UTILITY.FORMAT_ERROR_STACK,
+                p_error_backtrace => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE
+            );
             RETURN FALSE;
     END sentry_function;
-
-    PROCEDURE pre_authentication(
-        p_username IN ph_sec_authentication_pkg.t_username DEFAULT NULL
-    ) IS
-    BEGIN
-        ph_sec_authentication_pkg.clear_security_context;
-    END pre_authentication;
-
-    PROCEDURE post_authentication(
-        p_username IN ph_sec_authentication_pkg.t_username DEFAULT NULL
-    ) IS
-        l_username VARCHAR2(255) := COALESCE(normalize_username(p_username), current_apex_username);
-    BEGIN
-        IF l_username IS NOT NULL
-                AND l_username NOT IN ('nobody', 'apex_public_user') THEN
-        ph_sec_authentication_pkg.set_security_context(l_username);
-        END IF;
-    END post_authentication;
-
-    PROCEDURE invalid_session IS
-    BEGIN
-        ph_sec_authentication_pkg.clear_security_context;
-    END invalid_session;
-
-    PROCEDURE post_logout IS
-    BEGIN
-        ph_sec_authentication_pkg.clear_security_context;
-    END post_logout;
 
     FUNCTION navigation_menu_sql RETURN VARCHAR2 IS
     BEGIN
