@@ -44,6 +44,7 @@ CREATE OR REPLACE PACKAGE ph_sec_management_pkg AS
     PROCEDURE restore_user(p_user_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_preference_value IN VARCHAR2, p_value_type IN VARCHAR2 DEFAULT 'STRING', p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    FUNCTION get_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_default_value IN VARCHAR2 DEFAULT NULL) RETURN VARCHAR2;
     PROCEDURE update_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_preference_value IN VARCHAR2 DEFAULT NULL, p_value_type IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
@@ -788,6 +789,34 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_user_preference;
+
+    FUNCTION get_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_default_value IN VARCHAR2 DEFAULT NULL) RETURN VARCHAR2 IS
+        l_preference_code ph_sec_user_preferences.preference_code%TYPE := normalize_preference_code(p_preference_code);
+        l_value           ph_sec_user_preferences.preference_value%TYPE;
+    BEGIN
+        IF p_user_id IS NULL OR l_preference_code IS NULL THEN
+            RETURN p_default_value;
+        END IF;
+
+        SELECT preference_value
+          INTO l_value
+          FROM ph_sec_user_preferences
+         WHERE user_id = p_user_id
+           AND preference_code = l_preference_code
+           AND is_active = 1
+           AND is_deleted = 0;
+
+        IF l_preference_code = 'LANGUAGE' THEN
+            RETURN ph_localization_pkg.normalize_language(COALESCE(l_value, p_default_value));
+        END IF;
+
+        RETURN COALESCE(l_value, p_default_value);
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RETURN p_default_value;
+        WHEN OTHERS THEN
+            RETURN p_default_value;
+    END get_user_preference;
 
     PROCEDURE update_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_preference_value IN VARCHAR2 DEFAULT NULL, p_value_type IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
