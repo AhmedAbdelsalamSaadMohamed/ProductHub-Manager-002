@@ -44,3 +44,25 @@ CREATE TABLE ph_lookup_values (
         AND is_active IN (0, 1) )
 );
 
+CREATE TABLE ph_app_default_values (
+    default_key VARCHAR2(80 CHAR) NOT NULL,
+    default_code VARCHAR2(120 CHAR),
+    default_value VARCHAR2(4000 CHAR),
+    value_type VARCHAR2(20 CHAR) DEFAULT 'STRING' NOT NULL,
+    description_en VARCHAR2(500 CHAR),
+    description_ar VARCHAR2(500 CHAR),
+    is_system_default NUMBER(1) DEFAULT 1 NOT NULL,
+    is_active NUMBER(1) DEFAULT 1 NOT NULL,
+    is_deleted NUMBER(1) DEFAULT 0 NOT NULL CHECK ( is_deleted IN (0, 1) ),
+    created_by NUMBER,
+    created_at TIMESTAMP(3) DEFAULT SYSTIMESTAMP NOT NULL,
+    updated_by NUMBER,
+    updated_at TIMESTAMP(3),
+    deleted_by NUMBER,
+    deleted_at TIMESTAMP(3),
+    CONSTRAINT pk_ph_app_default_values PRIMARY KEY (default_key),
+    CONSTRAINT ck_ph_app_defaults_key CHECK ( default_key = UPPER(default_key) ),
+    CONSTRAINT ck_ph_app_defaults_value_type CHECK ( value_type IN ('STRING', 'NUMBER', 'BOOLEAN', 'JSON', 'CODE') ),
+    CONSTRAINT ck_ph_app_defaults_flags CHECK ( is_system_default IN (0, 1)
+        AND is_active IN (0, 1) )
+);

@@ -183,8 +183,25 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
     END normalize_language;
 
     FUNCTION current_language RETURN VARCHAR2 IS
+        l_language VARCHAR2(20);
     BEGIN
-        RETURN normalize_language(NULL);
+        l_language := ph_app_defaults_pkg.get_default_code(
+            p_default_key  => 'LANGUAGE',
+            p_default_code => NULL
+        );
+
+        RETURN normalize_language(l_language);
+    EXCEPTION
+        WHEN OTHERS THEN
+            log_error(
+                p_program_unit => $$PLSQL_UNIT || '.current_language',
+                p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
+                p_error_code => SQLCODE,
+                p_error_message => SQLERRM,
+                p_error_stack => DBMS_UTILITY.FORMAT_ERROR_STACK,
+                p_error_backtrace => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE
+            );
+            RETURN normalize_language(NULL);
     END current_language;
 
     FUNCTION current_language (
