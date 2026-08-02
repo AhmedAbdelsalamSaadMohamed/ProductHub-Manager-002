@@ -3,9 +3,6 @@ ProductHub Manager - Security Module Package Runner
 Target DBMS: Oracle Database 21c+
 */
 
-PROMPT Creating security error log package...
-@"packages/01_ph_sec_error_log_pkg.sql"
-
 PROMPT Creating security LOV package...
 @"packages/01_ph_sec_lov_pkg.sql"
 

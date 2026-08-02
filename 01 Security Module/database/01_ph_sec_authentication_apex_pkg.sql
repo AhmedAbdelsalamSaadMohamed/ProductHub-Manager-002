@@ -44,7 +44,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_apex_pkg AS
         RETURN l_username;
     EXCEPTION
         WHEN OTHERS THEN
-            ph_sec_error_log_pkg.log_error(
+        ph_sec_management_validation_pkg.log_error(
                 p_program_unit => $$PLSQL_UNIT || '.current_apex_username',
                 p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
                 p_error_code => SQLCODE,
@@ -76,7 +76,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_apex_pkg AS
         RETURN ph_sec_authentication_pkg.is_user_active(l_username);
     EXCEPTION
         WHEN OTHERS THEN
-            ph_sec_error_log_pkg.log_error(
+        ph_sec_management_validation_pkg.log_error(
                 p_program_unit => $$PLSQL_UNIT || '.sentry_function',
                 p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
                 p_error_code => SQLCODE,

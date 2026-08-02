@@ -271,17 +271,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     ----------------------------------------------------------------------
     -- Result-returning create/update/delete/restore implementations
     ----------------------------------------------------------------------
-    PROCEDURE set_success(p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2, p_message IN VARCHAR2) IS
-    BEGIN
-        p_result_code := 'S';
-        p_result_message := p_message;
-    END set_success;
 
-    PROCEDURE set_validation_error(p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2, p_message IN VARCHAR2) IS
-    BEGIN
-        p_result_code := 'V';
-        p_result_message := p_message;
-    END set_validation_error;
 
     PROCEDURE set_error(p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_error_code      NUMBER := SQLCODE;
@@ -289,7 +279,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
         l_error_stack     CLOB := DBMS_UTILITY.FORMAT_ERROR_STACK;
         l_error_backtrace CLOB := DBMS_UTILITY.FORMAT_ERROR_BACKTRACE;
     BEGIN
-        ph_sec_error_log_pkg.log_error(
+        ph_sec_management_validation_pkg.log_error(
             p_program_unit => $$PLSQL_UNIT,
             p_error_location => l_error_backtrace,
             p_error_code => l_error_code,
@@ -310,13 +300,13 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_create_user_type(p_user_type_name_en, p_user_type_name_ar, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         INSERT INTO ph_sec_user_type_lkp (user_type_name_en, user_type_name_ar, is_active, created_by)
             VALUES (TRIM(p_user_type_name_en), TRIM(p_user_type_name_ar), 1, NVL(p_created_by, 1))
             RETURNING user_type_id INTO p_user_type_id;
-        set_success(p_result_code, p_result_message, 'User type created successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'User type created successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -347,7 +337,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_update_user_type(p_user_type_id, p_user_type_name_en, p_user_type_name_ar, p_is_active, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_user_type_lkp
@@ -357,7 +347,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
                 updated_by = p_updated_by
             WHERE user_type_id = p_user_type_id
                 AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'User type updated successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'User type updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -369,11 +359,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_delete_user_type(p_user_type_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_user_type_lkp SET is_deleted = 1, updated_by = p_updated_by WHERE user_type_id = p_user_type_id AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'User type deleted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'User type deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -385,11 +375,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_restore_user_type(p_user_type_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_user_type_lkp SET is_deleted = 0, deleted_by = NULL, deleted_at = NULL, updated_by = p_updated_by, updated_at = SYSTIMESTAMP WHERE user_type_id = p_user_type_id;
-        set_success(p_result_code, p_result_message, 'User type restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'User type restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -401,13 +391,13 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_create_object_type(p_object_type_name_en, p_object_type_name_ar, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         INSERT INTO ph_sec_object_type_lkp (object_type_name_en, object_type_name_ar, is_active, created_by)
             VALUES (TRIM(p_object_type_name_en), TRIM(p_object_type_name_ar), 1, NVL(p_created_by, 1))
             RETURNING object_type_id INTO p_object_type_id;
-        set_success(p_result_code, p_result_message, 'Object type created successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Object type created successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -438,7 +428,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_update_object_type(p_object_type_id, p_object_type_name_en, p_object_type_name_ar, p_is_active, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_object_type_lkp
@@ -448,7 +438,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
                 updated_by = p_updated_by
             WHERE object_type_id = p_object_type_id
                 AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'Object type updated successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Object type updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -460,11 +450,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_delete_object_type(p_object_type_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_object_type_lkp SET is_deleted = 1, updated_by = p_updated_by WHERE object_type_id = p_object_type_id AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'Object type deleted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Object type deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -476,11 +466,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_restore_object_type(p_object_type_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_object_type_lkp SET is_deleted = 0, deleted_by = NULL, deleted_at = NULL, updated_by = p_updated_by, updated_at = SYSTIMESTAMP WHERE object_type_id = p_object_type_id;
-        set_success(p_result_code, p_result_message, 'Object type restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Object type restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -492,13 +482,13 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_create_object(p_parent_object_id, p_object_name, p_object_type_id, p_object_path, p_display_name_en, p_display_name_ar, p_description_en, p_description_ar, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         INSERT INTO ph_sec_objects (parent_object_id, object_name, object_type_id, object_path, display_name_en, display_name_ar, description_en, description_ar, is_active, created_by)
             VALUES (p_parent_object_id, UPPER(TRIM(p_object_name)), p_object_type_id, TRIM(p_object_path), TRIM(p_display_name_en), TRIM(p_display_name_ar), TRIM(p_description_en), TRIM(p_description_ar), 1, NVL(p_created_by, 1))
             RETURNING object_id INTO p_object_id;
-        set_success(p_result_code, p_result_message, 'Object created successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Object created successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -529,7 +519,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_update_object(p_object_id, p_parent_object_id, p_object_name, p_object_type_id, p_object_path, p_display_name_en, p_display_name_ar, p_description_en, p_description_ar, p_is_active, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_objects
@@ -545,7 +535,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
                 updated_by = p_updated_by
             WHERE object_id = p_object_id
                 AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'Object updated successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Object updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -557,12 +547,12 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_delete_object(p_object_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_permissions SET is_deleted = 1, updated_by = p_updated_by WHERE object_id = p_object_id AND is_deleted = 0;
         UPDATE ph_sec_objects SET is_deleted = 1, updated_by = p_updated_by WHERE object_id = p_object_id AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'Object deleted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Object deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -574,11 +564,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_restore_object(p_object_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_objects SET is_deleted = 0, deleted_by = NULL, deleted_at = NULL, updated_by = p_updated_by, updated_at = SYSTIMESTAMP WHERE object_id = p_object_id;
-        set_success(p_result_code, p_result_message, 'Object restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Object restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -590,13 +580,13 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_create_action(p_action_name, p_display_name_en, p_display_name_ar, p_description_en, p_description_ar, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         INSERT INTO ph_sec_actions (action_name, display_name_en, display_name_ar, description_en, description_ar, is_active, created_by)
             VALUES (UPPER(TRIM(p_action_name)), TRIM(p_display_name_en), TRIM(p_display_name_ar), TRIM(p_description_en), TRIM(p_description_ar), 1, NVL(p_created_by, 1))
             RETURNING action_id INTO p_action_id;
-        set_success(p_result_code, p_result_message, 'Action created successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Action created successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -626,7 +616,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_update_action(p_action_id, p_action_name, p_display_name_en, p_display_name_ar, p_description_en, p_description_ar, p_is_active, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_actions
@@ -639,7 +629,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
                 updated_by = p_updated_by
             WHERE action_id = p_action_id
                 AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'Action updated successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Action updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -651,12 +641,12 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_delete_action(p_action_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_permissions SET is_deleted = 1, updated_by = p_updated_by WHERE action_id = p_action_id AND is_deleted = 0;
         UPDATE ph_sec_actions SET is_deleted = 1, updated_by = p_updated_by WHERE action_id = p_action_id AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'Action deleted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Action deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -668,11 +658,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_restore_action(p_action_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_actions SET is_deleted = 0, deleted_by = NULL, deleted_at = NULL, updated_by = p_updated_by, updated_at = SYSTIMESTAMP WHERE action_id = p_action_id;
-        set_success(p_result_code, p_result_message, 'Action restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Action restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -684,13 +674,13 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_create_permission(p_object_id, p_action_id, p_permission_name_en, p_permission_name_ar, p_description_en, p_description_ar, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         INSERT INTO ph_sec_permissions (object_id, action_id, permission_name_en, permission_name_ar, description_en, description_ar, is_active, created_by)
             VALUES (p_object_id, p_action_id, TRIM(p_permission_name_en), TRIM(p_permission_name_ar), TRIM(p_description_en), TRIM(p_description_ar), 1, NVL(p_created_by, 1))
             RETURNING permission_id INTO p_permission_id;
-        set_success(p_result_code, p_result_message, 'Permission created successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Permission created successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -721,7 +711,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_update_permission(p_permission_id, p_object_id, p_action_id, p_permission_name_en, p_permission_name_ar, p_description_en, p_description_ar, p_is_active, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_permissions
@@ -735,7 +725,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
                 updated_by = p_updated_by
             WHERE permission_id = p_permission_id
                 AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'Permission updated successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Permission updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -747,13 +737,13 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_delete_permission(p_permission_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_role_permissions SET is_deleted = 1, updated_by = p_updated_by WHERE permission_id = p_permission_id AND is_deleted = 0;
         UPDATE ph_sec_apex_page_permissions SET is_deleted = 1, updated_by = p_updated_by WHERE permission_id = p_permission_id AND is_deleted = 0;
         UPDATE ph_sec_permissions SET is_deleted = 1, updated_by = p_updated_by WHERE permission_id = p_permission_id AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'Permission deleted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Permission deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -765,11 +755,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_restore_permission(p_permission_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_permissions SET is_deleted = 0, deleted_by = NULL, deleted_at = NULL, updated_by = p_updated_by, updated_at = SYSTIMESTAMP WHERE permission_id = p_permission_id;
-        set_success(p_result_code, p_result_message, 'Permission restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Permission restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -783,14 +773,14 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
 
         ph_sec_management_validation_pkg.validate_create_user(p_email, p_display_name, p_user_type, p_customer_id, p_must_change_password, p_is_initial_admin, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
 
         IF p_password IS NOT NULL THEN
             ph_sec_authentication_validation_pkg.validate_password(p_password, l_is_valid, l_validation_message);
             IF l_is_valid = 0 THEN
-                set_validation_error(p_result_code, p_result_message, l_validation_message);
+                ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
                 RETURN;
             END IF;
         END IF;
@@ -801,7 +791,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
         IF p_password IS NOT NULL THEN
             ph_sec_authentication_pkg.set_password(p_user_id, p_password, p_created_by);
         END IF;
-        set_success(p_result_code, p_result_message, 'User created successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'User created successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -834,7 +824,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_update_user(p_user_id, p_email, p_display_name, p_user_type, p_customer_id, p_must_change_password, p_is_initial_admin, p_is_active, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_users
@@ -848,7 +838,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
                 updated_by = p_updated_by
             WHERE user_id = p_user_id
                 AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'User updated successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'User updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -860,13 +850,13 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_delete_user(p_user_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_user_roles SET is_deleted = 1, updated_by = p_updated_by WHERE user_id = p_user_id AND is_deleted = 0;
         UPDATE ph_sec_user_preferences SET is_deleted = 1, updated_by = p_updated_by WHERE user_id = p_user_id AND is_deleted = 0;
         UPDATE ph_sec_users SET is_deleted = 1, is_active = 0, updated_by = p_updated_by WHERE user_id = p_user_id AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'User deleted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'User deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -878,11 +868,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_restore_user(p_user_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_users SET is_deleted = 0, is_active = 1, deleted_by = NULL, deleted_at = NULL, updated_by = p_updated_by, updated_at = SYSTIMESTAMP WHERE user_id = p_user_id;
-        set_success(p_result_code, p_result_message, 'User restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'User restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -896,13 +886,13 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_create_user_preference(p_user_id, p_preference_code, p_preference_value, p_value_type, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
 
         INSERT INTO ph_sec_user_preferences (user_id, preference_code, preference_value, value_type, is_active, created_by)
             VALUES (p_user_id, l_preference_code, TRIM(p_preference_value), l_value_type, 1, NVL(p_created_by, 1));
-        set_success(p_result_code, p_result_message, 'User preference created successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'User preference created successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -962,7 +952,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_update_user_preference(p_user_id, p_preference_code, p_preference_value, p_value_type, p_is_active, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
 
@@ -974,7 +964,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
             WHERE user_id = p_user_id
                 AND preference_code = l_preference_code
                 AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'User preference updated successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'User preference updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -986,7 +976,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_delete_user_preference(p_user_id, p_preference_code, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_user_preferences
@@ -995,7 +985,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
             WHERE user_id = p_user_id
                 AND preference_code = UPPER(TRIM(p_preference_code))
                 AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'User preference deleted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'User preference deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1007,7 +997,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_restore_user_preference(p_user_id, p_preference_code, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_user_preferences
@@ -1018,7 +1008,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
                 updated_at = SYSTIMESTAMP
             WHERE user_id = p_user_id
                 AND preference_code = UPPER(TRIM(p_preference_code));
-        set_success(p_result_code, p_result_message, 'User preference restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'User preference restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1030,13 +1020,13 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_create_role(p_role_name_en, p_role_name_ar, p_user_type, p_description_en, p_description_ar, p_is_system_role, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         INSERT INTO ph_sec_roles (role_name_en, role_name_ar, description_en, description_ar, user_type, is_system_role, is_active, created_by)
             VALUES (TRIM(p_role_name_en), TRIM(p_role_name_ar), TRIM(p_description_en), TRIM(p_description_ar), p_user_type, p_is_system_role, 1, NVL(p_created_by, 1))
             RETURNING role_id INTO p_role_id;
-        set_success(p_result_code, p_result_message, 'Role created successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Role created successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1068,7 +1058,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_update_role(p_role_id, p_role_name_en, p_role_name_ar, p_user_type, p_description_en, p_description_ar, p_is_system_role, p_is_active, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_roles
@@ -1082,7 +1072,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
                 updated_by = p_updated_by
             WHERE role_id = p_role_id
                 AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'Role updated successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Role updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1094,13 +1084,13 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_delete_role(p_role_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_role_permissions SET is_deleted = 1, updated_by = p_updated_by WHERE role_id = p_role_id AND is_deleted = 0;
         UPDATE ph_sec_user_roles SET is_deleted = 1, updated_by = p_updated_by WHERE role_id = p_role_id AND is_deleted = 0;
         UPDATE ph_sec_roles SET is_deleted = 1, is_active = 0, updated_by = p_updated_by WHERE role_id = p_role_id AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'Role deleted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Role deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1112,11 +1102,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_restore_role(p_role_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_roles SET is_deleted = 0, is_active = 1, deleted_by = NULL, deleted_at = NULL, updated_by = p_updated_by, updated_at = SYSTIMESTAMP WHERE role_id = p_role_id;
-        set_success(p_result_code, p_result_message, 'Role restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Role restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1128,7 +1118,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_grant_role_permission(p_role_id, p_permission_id, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         MERGE INTO ph_sec_role_permissions target
@@ -1136,7 +1126,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
             ON (target.role_id = source.role_id AND target.permission_id = source.permission_id)
             WHEN MATCHED THEN UPDATE SET target.is_deleted = 0, target.deleted_by = NULL, target.deleted_at = NULL, target.updated_by = p_created_by, target.updated_at = SYSTIMESTAMP
             WHEN NOT MATCHED THEN INSERT (role_id, permission_id, created_by) VALUES (source.role_id, source.permission_id, NVL(p_created_by, 1));
-        set_success(p_result_code, p_result_message, 'Role permission granted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Role permission granted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1148,11 +1138,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_revoke_role_permission(p_role_id, p_permission_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_role_permissions SET is_deleted = 1, updated_by = p_updated_by WHERE role_id = p_role_id AND permission_id = p_permission_id AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'Role permission revoked successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Role permission revoked successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1164,11 +1154,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_restore_role_permission(p_role_id, p_permission_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_role_permissions SET is_deleted = 0, deleted_by = NULL, deleted_at = NULL, updated_by = p_updated_by, updated_at = SYSTIMESTAMP WHERE role_id = p_role_id AND permission_id = p_permission_id;
-        set_success(p_result_code, p_result_message, 'Role permission restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Role permission restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1180,7 +1170,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_assign_user_role(p_user_id, p_role_id, p_assigned_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         MERGE INTO ph_sec_user_roles target
@@ -1188,7 +1178,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
             ON (target.user_id = source.user_id AND target.role_id = source.role_id)
             WHEN MATCHED THEN UPDATE SET target.assigned_by = p_assigned_by, target.assigned_at = SYSTIMESTAMP, target.is_deleted = 0, target.deleted_by = NULL, target.deleted_at = NULL, target.updated_by = p_assigned_by, target.updated_at = SYSTIMESTAMP
             WHEN NOT MATCHED THEN INSERT (user_id, role_id, assigned_by, created_by) VALUES (source.user_id, source.role_id, p_assigned_by, NVL(p_assigned_by, 1));
-        set_success(p_result_code, p_result_message, 'User role assigned successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'User role assigned successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1200,11 +1190,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_revoke_user_role(p_user_id, p_role_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_user_roles SET is_deleted = 1, updated_by = p_updated_by WHERE user_id = p_user_id AND role_id = p_role_id AND is_deleted = 0;
-        set_success(p_result_code, p_result_message, 'User role revoked successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'User role revoked successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1216,11 +1206,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_restore_user_role(p_user_id, p_role_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         UPDATE ph_sec_user_roles SET is_deleted = 0, deleted_by = NULL, deleted_at = NULL, updated_by = p_updated_by, updated_at = SYSTIMESTAMP WHERE user_id = p_user_id AND role_id = p_role_id;
-        set_success(p_result_code, p_result_message, 'User role restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'User role restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1235,7 +1225,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_create_apex_page_type(p_page_type_code, p_page_type_name_en, p_page_type_name_ar, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
 
@@ -1253,7 +1243,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
         NVL(p_created_by, 1)
         ) RETURNING apex_page_type_id INTO p_page_type_id;
 
-        set_success(p_result_code, p_result_message, 'APEX page type created successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'APEX page type created successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1283,11 +1273,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_update_apex_page_type(p_page_type_id, p_page_type_code, p_page_type_name_en, p_page_type_name_ar, p_is_active, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         do_update_apex_page_type(p_page_type_id, p_page_type_code, p_page_type_name_en, p_page_type_name_ar, p_is_active, p_updated_by);
-        set_success(p_result_code, p_result_message, 'APEX page type updated successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'APEX page type updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1299,11 +1289,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_delete_apex_page_type(p_page_type_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         do_delete_apex_page_type(p_page_type_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'APEX page type deleted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'APEX page type deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1315,11 +1305,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_restore_apex_page_type(p_page_type_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         do_restore_apex_page_type(p_page_type_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'APEX page type restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'APEX page type restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1331,7 +1321,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_create_apex_page(p_apex_app_id, p_apex_page_no, p_apex_page_type_id, p_page_name_en, p_page_name_ar, p_page_alias, p_object_path, p_access_mode, p_is_public, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
 
@@ -1361,7 +1351,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
         NVL(p_created_by, 1)
         ) RETURNING apex_page_id INTO p_apex_page_id;
 
-        set_success(p_result_code, p_result_message, 'APEX page created successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'APEX page created successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1392,11 +1382,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_update_apex_page(p_apex_page_id, p_apex_app_id, p_apex_page_no, p_apex_page_type_id, p_page_name_en, p_page_name_ar, p_page_alias, p_object_path, p_access_mode, p_is_public, p_is_active, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         do_update_apex_page(p_apex_page_id, p_apex_app_id, p_apex_page_no, p_apex_page_type_id, p_page_name_en, p_page_name_ar, p_page_alias, p_object_path, p_access_mode, p_is_public, p_is_active, p_updated_by);
-        set_success(p_result_code, p_result_message, 'APEX page updated successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'APEX page updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1408,11 +1398,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_delete_apex_page(p_apex_page_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         do_delete_apex_page(p_apex_page_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'APEX page deleted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'APEX page deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1424,11 +1414,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_restore_apex_page(p_apex_page_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         do_restore_apex_page(p_apex_page_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'APEX page restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'APEX page restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1440,7 +1430,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_create_apex_page_permission(p_apex_page_id, p_permission_id, p_is_an_access_permission, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
 
@@ -1461,7 +1451,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
         INSERT (apex_page_id, permission_id, is_an_access_permission, is_active, created_by)
             VALUES (source.apex_page_id, source.permission_id, p_is_an_access_permission, 1, NVL(p_created_by, 1));
 
-        set_success(p_result_code, p_result_message, 'APEX page permission created successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'APEX page permission created successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1478,11 +1468,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_update_apex_page_permission(p_apex_page_id, p_permission_id, p_is_an_access_permission, p_is_active, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         do_update_apex_page_permission(p_apex_page_id, p_permission_id, p_is_an_access_permission, p_is_active, p_updated_by);
-        set_success(p_result_code, p_result_message, 'APEX page permission updated successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'APEX page permission updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1494,11 +1484,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_delete_apex_page_permission(p_apex_page_id, p_permission_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         revoke_apex_page_permission(p_apex_page_id, p_permission_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'APEX page permission deleted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'APEX page permission deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1510,11 +1500,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     BEGIN
         ph_sec_management_validation_pkg.validate_restore_apex_page_permission(p_apex_page_id, p_permission_id, p_updated_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
         do_restore_apex_page_permission(p_apex_page_id, p_permission_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'APEX page permission restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'APEX page permission restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);

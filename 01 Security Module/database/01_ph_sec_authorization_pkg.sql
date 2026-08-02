@@ -43,26 +43,6 @@ END ph_sec_authorization_pkg;
 /
 
 CREATE OR REPLACE PACKAGE BODY ph_sec_authorization_pkg AS
-
-    FUNCTION yes_no(p_count IN NUMBER) RETURN NUMBER IS
-    BEGIN
-        IF p_count > 0 THEN
-            RETURN 1;
-        END IF;
-
-        RETURN 0;
-    END yes_no;
-
-    PROCEDURE set_invalid (
-        o_is_valid              OUT NUMBER,
-        o_validation_message    OUT VARCHAR2,
-        p_message               IN VARCHAR2
-    ) IS
-    BEGIN
-        o_is_valid := 0;
-        o_validation_message := p_message;
-    END set_invalid;
-
     FUNCTION user_is_authenticated(p_user_id IN NUMBER) RETURN NUMBER IS
         l_count NUMBER(10);
     BEGIN
@@ -73,7 +53,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authorization_pkg AS
            AND is_active = 1
            AND is_deleted = 0;
 
-        RETURN yes_no(l_count);
+        RETURN ph_helpers_pkg.yes_no(l_count);
     END user_is_authenticated;
 
     FUNCTION has_role (
@@ -203,7 +183,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authorization_pkg AS
            AND object_name = UPPER(TRIM(p_object_name))
            AND action_name = UPPER(TRIM(p_action_name));
 
-        RETURN yes_no(l_count);
+        RETURN ph_helpers_pkg.yes_no(l_count);
     END user_has_permission;
 
     FUNCTION permission_is_valid (
@@ -215,7 +195,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authorization_pkg AS
     ) RETURN NUMBER IS
     BEGIN
         IF p_user_id IS NULL THEN
-            set_invalid(
+            ph_helpers_pkg.set_invalid(
                 o_is_valid,
                 o_validation_message,
                 ph_localization_pkg.localized_text(
@@ -225,7 +205,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authorization_pkg AS
             );
             RETURN 0;
         ELSIF user_is_authenticated(p_user_id) = 0 THEN
-            set_invalid(
+            ph_helpers_pkg.set_invalid(
                 o_is_valid,
                 o_validation_message,
                 ph_localization_pkg.localized_text(
@@ -235,7 +215,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authorization_pkg AS
             );
             RETURN 0;
         ELSIF user_has_permission(p_user_id, p_object_name, p_action_name) = 0 THEN
-            set_invalid(
+            ph_helpers_pkg.set_invalid(
                 o_is_valid,
                 o_validation_message,
                 ph_localization_pkg.localized_text(

@@ -52,52 +52,6 @@ END ph_app_defaults_pkg;
 /
 
 CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
-    FUNCTION valid_flag (
-        p_flag IN NUMBER
-    ) RETURN NUMBER IS
-    BEGIN
-        RETURN CASE WHEN p_flag IN (0, 1) THEN 1 ELSE 0 END;
-    END valid_flag;
-
-    FUNCTION valid_value_type (
-        p_value_type IN VARCHAR2
-    ) RETURN NUMBER IS
-    BEGIN
-        RETURN CASE
-            WHEN UPPER(TRIM(COALESCE(p_value_type, 'STRING'))) IN ('STRING', 'NUMBER', 'BOOLEAN', 'JSON', 'CODE') THEN 1
-            ELSE 0
-        END;
-    END valid_value_type;
-
-    PROCEDURE set_success (
-        p_result_code    OUT VARCHAR2,
-        p_result_message OUT VARCHAR2,
-        p_message        IN VARCHAR2
-    ) IS
-    BEGIN
-        p_result_code := 'S';
-        p_result_message := p_message;
-    END set_success;
-
-    PROCEDURE set_validation_error (
-        p_result_code    OUT VARCHAR2,
-        p_result_message OUT VARCHAR2,
-        p_message        IN VARCHAR2
-    ) IS
-    BEGIN
-        p_result_code := 'V';
-        p_result_message := p_message;
-    END set_validation_error;
-
-    PROCEDURE set_error (
-        p_result_code    OUT VARCHAR2,
-        p_result_message OUT VARCHAR2
-    ) IS
-    BEGIN
-        p_result_code := 'E';
-        p_result_message := 'Unexpected error while managing application default value.';
-    END set_error;
-
     FUNCTION get_default_code (
         p_default_key  IN VARCHAR2,
         p_default_code IN VARCHAR2 DEFAULT NULL
@@ -177,16 +131,16 @@ CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
         l_value_type  ph_app_default_values.value_type%TYPE := UPPER(TRIM(COALESCE(p_value_type, 'STRING')));
     BEGIN
         IF l_default_key IS NULL THEN
-            set_validation_error(p_result_code, p_result_message, 'Default key is required.');
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, 'Default key is required.');
             RETURN;
-        ELSIF valid_value_type(l_value_type) = 0 THEN
-            set_validation_error(p_result_code, p_result_message, 'Default value type must be STRING, NUMBER, BOOLEAN, JSON, or CODE.');
+        ELSIF NOT ph_helpers_pkg.valid_default_value_type(l_value_type) THEN
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, 'Default value type must be STRING, NUMBER, BOOLEAN, JSON, or CODE.');
             RETURN;
-        ELSIF valid_flag(COALESCE(p_is_system_default, 0)) = 0 THEN
-            set_validation_error(p_result_code, p_result_message, 'System default flag must be 0 or 1.');
+        ELSIF NOT ph_helpers_pkg.valid_flag(COALESCE(p_is_system_default, 0)) THEN
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, 'System default flag must be 0 or 1.');
             RETURN;
-        ELSIF valid_flag(COALESCE(p_is_active, 1)) = 0 THEN
-            set_validation_error(p_result_code, p_result_message, 'Active flag must be 0 or 1.');
+        ELSIF NOT ph_helpers_pkg.valid_flag(COALESCE(p_is_active, 1)) THEN
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, 'Active flag must be 0 or 1.');
             RETURN;
         END IF;
 
@@ -240,10 +194,10 @@ CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
                 NVL(p_updated_by, 1)
             );
 
-        set_success(p_result_code, p_result_message, 'Application default value saved successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Application default value saved successfully.');
     EXCEPTION
         WHEN OTHERS THEN
-            set_error(p_result_code, p_result_message);
+            ph_helpers_pkg.set_error(p_result_code, p_result_message, 'Unexpected error while managing application default value.');
     END set_default_value;
 
     PROCEDURE delete_default_value (
@@ -255,7 +209,7 @@ CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
         l_default_key ph_app_default_values.default_key%TYPE := UPPER(TRIM(p_default_key));
     BEGIN
         IF l_default_key IS NULL THEN
-            set_validation_error(p_result_code, p_result_message, 'Default key is required.');
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, 'Default key is required.');
             RETURN;
         END IF;
 
@@ -267,13 +221,13 @@ CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
            AND is_deleted = 0;
 
         IF SQL%ROWCOUNT = 0 THEN
-            set_validation_error(p_result_code, p_result_message, 'Application default value was not found.');
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, 'Application default value was not found.');
         ELSE
-            set_success(p_result_code, p_result_message, 'Application default value deleted successfully.');
+            ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Application default value deleted successfully.');
         END IF;
     EXCEPTION
         WHEN OTHERS THEN
-            set_error(p_result_code, p_result_message);
+            ph_helpers_pkg.set_error(p_result_code, p_result_message, 'Unexpected error while managing application default value.');
     END delete_default_value;
 
     PROCEDURE restore_default_value (
@@ -285,7 +239,7 @@ CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
         l_default_key ph_app_default_values.default_key%TYPE := UPPER(TRIM(p_default_key));
     BEGIN
         IF l_default_key IS NULL THEN
-            set_validation_error(p_result_code, p_result_message, 'Default key is required.');
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, 'Default key is required.');
             RETURN;
         END IF;
 
@@ -298,13 +252,13 @@ CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
          WHERE default_key = l_default_key;
 
         IF SQL%ROWCOUNT = 0 THEN
-            set_validation_error(p_result_code, p_result_message, 'Application default value was not found.');
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, 'Application default value was not found.');
         ELSE
-            set_success(p_result_code, p_result_message, 'Application default value restored successfully.');
+            ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Application default value restored successfully.');
         END IF;
     EXCEPTION
         WHEN OTHERS THEN
-            set_error(p_result_code, p_result_message);
+            ph_helpers_pkg.set_error(p_result_code, p_result_message, 'Unexpected error while managing application default value.');
     END restore_default_value;
 END ph_app_defaults_pkg;
 /

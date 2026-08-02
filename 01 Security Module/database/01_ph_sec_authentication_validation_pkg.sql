@@ -37,17 +37,7 @@ END ph_sec_authentication_validation_pkg;
 /
 
 CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_validation_pkg AS
-    PROCEDURE set_valid(o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2) IS
-    BEGIN
-        o_is_valid := 1;
-        o_validation_message := ph_localization_pkg.localized_text('Valid.', 'Valid.');
-    END set_valid;
 
-    PROCEDURE set_invalid(o_is_valid OUT NUMBER, o_validation_message OUT VARCHAR2, p_message IN VARCHAR2) IS
-    BEGIN
-        o_is_valid := 0;
-        o_validation_message := p_message;
-    END set_invalid;
 
 
 
@@ -70,11 +60,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_validation_pkg AS
     ) IS
     BEGIN
         IF p_password IS NULL OR LENGTH(p_password) < 8 THEN
-            set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('PASSWORD_MIN_LENGTH'));
+            ph_helpers_pkg.set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('PASSWORD_MIN_LENGTH'));
             RETURN;
         END IF;
 
-        set_valid(o_is_valid, o_validation_message);
+        ph_helpers_pkg.set_valid(o_is_valid, o_validation_message);
     END validate_password;
 
     PROCEDURE validate_set_password(
@@ -90,11 +80,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_validation_pkg AS
         END IF;
 
         IF NOT user_exists(p_user_id) THEN
-            set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('USER_NOT_FOUND'));
+            ph_helpers_pkg.set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('USER_NOT_FOUND'));
             RETURN;
         END IF;
 
-        set_valid(o_is_valid, o_validation_message);
+        ph_helpers_pkg.set_valid(o_is_valid, o_validation_message);
     END validate_set_password;
 
     PROCEDURE validate_set_user_preference(
@@ -123,12 +113,12 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_validation_pkg AS
                AND is_deleted = 0;
         EXCEPTION
             WHEN NO_DATA_FOUND THEN
-                set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('USER_NOT_FOUND'));
+                ph_helpers_pkg.set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('USER_NOT_FOUND'));
                 RETURN;
         END;
 
         IF o_preference_code IS NULL OR o_value_type NOT IN ('STRING', 'NUMBER', 'BOOLEAN', 'JSON') THEN
-            set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('INVALID_PREFERENCE'));
+            ph_helpers_pkg.set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('INVALID_PREFERENCE'));
             RETURN;
         END IF;
 
@@ -138,7 +128,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_validation_pkg AS
         ELSIF o_preference_code = 'THEME_MODE' THEN
             o_preference_value := UPPER(COALESCE(o_preference_value, 'SYSTEM'));
             IF o_preference_value NOT IN ('LIGHT', 'DARK', 'SYSTEM') THEN
-                set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('INVALID_PREFERENCE'));
+                ph_helpers_pkg.set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('INVALID_PREFERENCE'));
                 RETURN;
             END IF;
             o_value_type := 'STRING';
@@ -148,32 +138,32 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_validation_pkg AS
         ELSIF o_preference_code = 'PAGE_SIZE' THEN
             BEGIN
                 IF TO_NUMBER(o_preference_value) < 1 THEN
-                    set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('INVALID_PREFERENCE'));
+                    ph_helpers_pkg.set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('INVALID_PREFERENCE'));
                     RETURN;
                 END IF;
             EXCEPTION
                 WHEN VALUE_ERROR THEN
-                    set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('INVALID_PREFERENCE'));
+                    ph_helpers_pkg.set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('INVALID_PREFERENCE'));
                     RETURN;
             END;
             o_value_type := 'NUMBER';
         ELSIF o_preference_code = 'TIME_FORMAT' THEN
             o_preference_value := UPPER(COALESCE(o_preference_value, '24H'));
             IF o_preference_value NOT IN ('12H', '24H') THEN
-                set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('INVALID_PREFERENCE'));
+                ph_helpers_pkg.set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('INVALID_PREFERENCE'));
                 RETURN;
             END IF;
             o_value_type := 'STRING';
         ELSIF o_preference_code = 'DENSITY' THEN
             o_preference_value := UPPER(COALESCE(o_preference_value, 'COMFORTABLE'));
             IF o_preference_value NOT IN ('COMPACT', 'COMFORTABLE', 'SPACIOUS') THEN
-                set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('INVALID_PREFERENCE'));
+                ph_helpers_pkg.set_invalid(o_is_valid, o_validation_message, ph_localization_pkg.localized_message('INVALID_PREFERENCE'));
                 RETURN;
             END IF;
             o_value_type := 'STRING';
         END IF;
 
-        set_valid(o_is_valid, o_validation_message);
+        ph_helpers_pkg.set_valid(o_is_valid, o_validation_message);
     END validate_set_user_preference;
 END ph_sec_authentication_validation_pkg;
 /

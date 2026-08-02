@@ -1,14 +1,12 @@
-/*
-ProductHub Manager - Customer and Contract Management Package
+﻿/*
+ProductHub Manager - Contract Management Package
 Target DBMS: Oracle Database 21c+
 */
 
-CREATE OR REPLACE PACKAGE ph_erp_customer_contract_pkg AS
+CREATE OR REPLACE PACKAGE ph_erp_contract_pkg AS
     ----------------------------------------------------------------------
     -- Read operations
     ----------------------------------------------------------------------
-    FUNCTION get_customers(p_customer_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR;
-    FUNCTION get_customer_users(p_customer_id IN NUMBER DEFAULT NULL, p_user_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR;
     FUNCTION get_contracts(p_customer_id IN NUMBER DEFAULT NULL, p_contract_id IN NUMBER DEFAULT NULL, p_product_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR;
     FUNCTION get_contract_urls(p_contract_id IN NUMBER DEFAULT NULL, p_contract_url_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR;
     FUNCTION get_contract_modules(p_contract_id IN NUMBER DEFAULT NULL, p_product_id IN NUMBER DEFAULT NULL, p_module_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR;
@@ -18,36 +16,21 @@ CREATE OR REPLACE PACKAGE ph_erp_customer_contract_pkg AS
     ----------------------------------------------------------------------
     -- Create/update/delete/restore operations
     ----------------------------------------------------------------------
-    PROCEDURE create_customer(p_customer_name IN VARCHAR2, p_legal_name IN VARCHAR2 DEFAULT NULL, p_contact_email IN VARCHAR2 DEFAULT NULL, p_contact_phone IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_customer_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-    PROCEDURE put_customer(p_customer_name IN VARCHAR2, p_legal_name IN VARCHAR2 DEFAULT NULL, p_contact_email IN VARCHAR2 DEFAULT NULL, p_contact_phone IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_customer_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-    PROCEDURE update_customer(p_customer_id IN NUMBER, p_customer_name IN VARCHAR2 DEFAULT NULL, p_legal_name IN VARCHAR2 DEFAULT NULL, p_contact_email IN VARCHAR2 DEFAULT NULL, p_contact_phone IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-    PROCEDURE delete_customer(p_customer_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-    PROCEDURE restore_customer(p_customer_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-
-    PROCEDURE create_customer_user(p_customer_id IN NUMBER, p_email IN VARCHAR2, p_display_name IN VARCHAR2, p_is_initial_admin IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_user_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-    PROCEDURE put_customer_user(p_customer_id IN NUMBER, p_email IN VARCHAR2, p_display_name IN VARCHAR2, p_is_initial_admin IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_user_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-    PROCEDURE update_customer_user(p_user_id IN NUMBER, p_customer_id IN NUMBER, p_email IN VARCHAR2 DEFAULT NULL, p_display_name IN VARCHAR2 DEFAULT NULL, p_is_initial_admin IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-    PROCEDURE delete_customer_user(p_user_id IN NUMBER, p_customer_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-    PROCEDURE restore_customer_user(p_user_id IN NUMBER, p_customer_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-
     PROCEDURE create_contract(p_contract_no IN VARCHAR2, p_customer_id IN NUMBER, p_product_id IN NUMBER, p_start_date IN DATE, p_end_date IN DATE DEFAULT NULL, p_payment_cycle IN NUMBER, p_notes_en IN VARCHAR2 DEFAULT NULL, p_notes_ar IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_contract_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE put_contract(p_contract_no IN VARCHAR2, p_customer_id IN NUMBER, p_product_id IN NUMBER, p_start_date IN DATE, p_end_date IN DATE DEFAULT NULL, p_payment_cycle IN NUMBER, p_notes_en IN VARCHAR2 DEFAULT NULL, p_notes_ar IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_contract_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_contract(p_contract_id IN NUMBER, p_contract_no IN VARCHAR2 DEFAULT NULL, p_customer_id IN NUMBER DEFAULT NULL, p_product_id IN NUMBER DEFAULT NULL, p_start_date IN DATE DEFAULT NULL, p_end_date IN DATE DEFAULT NULL, p_payment_cycle IN NUMBER DEFAULT NULL, p_notes_en IN VARCHAR2 DEFAULT NULL, p_notes_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_contract(p_contract_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_contract(p_contract_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-
     PROCEDURE create_contract_url(p_contract_id IN NUMBER, p_access_url IN VARCHAR2, p_is_primary IN NUMBER DEFAULT 1, p_created_by IN NUMBER DEFAULT NULL, p_contract_url_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE put_contract_url(p_contract_id IN NUMBER, p_access_url IN VARCHAR2, p_is_primary IN NUMBER DEFAULT 1, p_created_by IN NUMBER DEFAULT NULL, p_contract_url_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_contract_url(p_contract_url_id IN NUMBER, p_access_url IN VARCHAR2 DEFAULT NULL, p_is_primary IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_contract_url(p_contract_url_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_contract_url(p_contract_url_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-
     PROCEDURE create_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE put_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_effective_from IN DATE DEFAULT NULL, p_effective_to IN DATE DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
-
     PROCEDURE create_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_agreed_price IN NUMBER DEFAULT NULL, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE put_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_agreed_price IN NUMBER DEFAULT NULL, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_agreed_price IN NUMBER DEFAULT NULL, p_effective_from IN DATE DEFAULT NULL, p_effective_to IN DATE DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
@@ -55,18 +38,18 @@ CREATE OR REPLACE PACKAGE ph_erp_customer_contract_pkg AS
     PROCEDURE restore_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     ----------------------------------------------------------------------
-    -- Contract URL maintenance
+    -- Maintenance operations
     ----------------------------------------------------------------------
     PROCEDURE set_primary_url(p_contract_url_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL);
     PROCEDURE ensure_primary_url(p_contract_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL);
-END ph_erp_customer_contract_pkg;
+END ph_erp_contract_pkg;
 /
 
-CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
+CREATE OR REPLACE PACKAGE BODY ph_erp_contract_pkg AS
     ----------------------------------------------------------------------
-    -- Private validation helpers
+    -- Private helpers
     ----------------------------------------------------------------------
-    FUNCTION bool_to_number(p_count IN NUMBER) RETURN NUMBER IS
+FUNCTION bool_to_number(p_count IN NUMBER) RETURN NUMBER IS
     BEGIN
         IF p_count > 0 THEN
             RETURN 1;
@@ -77,7 +60,8 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
     ----------------------------------------------------------------------
     -- Private validation and lookup implementations
     ----------------------------------------------------------------------
-    FUNCTION is_active_customer(p_customer_id IN NUMBER) RETURN NUMBER IS
+
+FUNCTION is_active_customer(p_customer_id IN NUMBER) RETURN NUMBER IS
         l_count NUMBER(10);
     BEGIN
         SELECT COUNT(*) INTO l_count
@@ -88,30 +72,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         RETURN bool_to_number(l_count);
     END is_active_customer;
 
-    FUNCTION has_initial_admin(p_customer_id IN NUMBER) RETURN NUMBER IS
-        l_count NUMBER(10);
-    BEGIN
-        SELECT COUNT(*) INTO l_count
-            FROM ph_sec_users
-            WHERE customer_id = p_customer_id
-                AND is_initial_admin = 1
-                AND is_active = 1
-                AND is_deleted = 0;
-        RETURN bool_to_number(l_count);
-    END has_initial_admin;
-
-    FUNCTION has_active_contract(p_customer_id IN NUMBER) RETURN NUMBER IS
-        l_count NUMBER(10);
-    BEGIN
-        SELECT COUNT(*) INTO l_count
-            FROM ph_erp_contracts
-            WHERE customer_id = p_customer_id
-                AND is_active = 1
-                AND is_deleted = 0;
-        RETURN bool_to_number(l_count);
-    END has_active_contract;
-
-    FUNCTION get_contract_customer_id(p_contract_id IN NUMBER) RETURN NUMBER IS
+FUNCTION get_contract_customer_id(p_contract_id IN NUMBER) RETURN NUMBER IS
         l_customer_id ph_erp_contracts.customer_id%TYPE;
     BEGIN
         SELECT customer_id INTO l_customer_id
@@ -124,7 +85,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
             RETURN NULL;
     END get_contract_customer_id;
 
-    FUNCTION get_contract_product_id(p_contract_id IN NUMBER) RETURN NUMBER IS
+FUNCTION get_contract_product_id(p_contract_id IN NUMBER) RETURN NUMBER IS
         l_product_id ph_erp_contracts.product_id%TYPE;
     BEGIN
         SELECT product_id INTO l_product_id
@@ -137,7 +98,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
             RETURN NULL;
     END get_contract_product_id;
 
-    FUNCTION is_module_valid_for_contract(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER) RETURN NUMBER IS
+FUNCTION is_module_valid_for_contract(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER) RETURN NUMBER IS
         l_count NUMBER(10);
     BEGIN
         SELECT COUNT(*) INTO l_count
@@ -154,7 +115,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         RETURN bool_to_number(l_count);
     END is_module_valid_for_contract;
 
-    FUNCTION is_feature_valid_for_contract(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER) RETURN NUMBER IS
+FUNCTION is_feature_valid_for_contract(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER) RETURN NUMBER IS
         l_count NUMBER(10);
     BEGIN
         SELECT COUNT(*) INTO l_count
@@ -179,7 +140,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         RETURN bool_to_number(l_count);
     END is_feature_valid_for_contract;
 
-    FUNCTION has_primary_url(p_contract_id IN NUMBER) RETURN NUMBER IS
+FUNCTION has_primary_url(p_contract_id IN NUMBER) RETURN NUMBER IS
         l_count NUMBER(10);
     BEGIN
         SELECT COUNT(*) INTO l_count
@@ -191,21 +152,21 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         RETURN bool_to_number(l_count);
     END has_primary_url;
 
-    PROCEDURE require_flag(p_value IN NUMBER, p_name IN VARCHAR2) IS
+PROCEDURE require_flag(p_value IN NUMBER, p_name IN VARCHAR2) IS
     BEGIN
         IF NVL(p_value, -1) NOT IN (0, 1) THEN
-            RAISE_APPLICATION_ERROR(-20290, ph_localization_pkg.localized_text(p_name || ' must be 0 or 1.', p_name || ' ظٹط¬ط¨ ط£ظ† ظٹظƒظˆظ† 0 ط£ظˆ 1.'));
+            RAISE_APPLICATION_ERROR(-20290, ph_localization_pkg.localized_text(p_name || ' must be 0 or 1.', p_name || ' ط¸ظ¹ط·آ¬ط·آ¨ ط·آ£ط¸â€  ط¸ظ¹ط¸ئ’ط¸ث†ط¸â€  0 ط·آ£ط¸ث† 1.'));
         END IF;
     END require_flag;
 
-    PROCEDURE require_text(p_value IN VARCHAR2, p_name IN VARCHAR2) IS
+PROCEDURE require_text(p_value IN VARCHAR2, p_name IN VARCHAR2) IS
     BEGIN
         IF TRIM(p_value) IS NULL THEN
-            RAISE_APPLICATION_ERROR(-20291, ph_localization_pkg.localized_text(p_name || ' is required.', p_name || ' ظ…ط·ظ„ظˆط¨.'));
+            RAISE_APPLICATION_ERROR(-20291, ph_localization_pkg.localized_text(p_name || ' is required.', p_name || ' ط¸â€¦ط·آ·ط¸â€‍ط¸ث†ط·آ¨.'));
         END IF;
     END require_text;
 
-    PROCEDURE require_contract_product(p_product_id IN NUMBER) IS
+PROCEDURE require_contract_product(p_product_id IN NUMBER) IS
         l_count NUMBER(10);
     BEGIN
         SELECT COUNT(*)
@@ -220,7 +181,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         END IF;
     END require_contract_product;
 
-    PROCEDURE require_contract_payment_cycle(p_payment_cycle IN NUMBER) IS
+PROCEDURE require_contract_payment_cycle(p_payment_cycle IN NUMBER) IS
         l_count NUMBER(10);
     BEGIN
         SELECT COUNT(*)
@@ -235,84 +196,58 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         END IF;
     END require_contract_payment_cycle;
 
-    PROCEDURE require_contract_dates(p_start_date IN DATE, p_end_date IN DATE) IS
+PROCEDURE require_contract_dates(p_start_date IN DATE, p_end_date IN DATE) IS
     BEGIN
         IF p_start_date IS NULL THEN
-            RAISE_APPLICATION_ERROR(-20292, ph_localization_pkg.localized_text('Contract start date is required.', 'طھط§ط±ظٹط® ط¨ط¯ط§ظٹط© ط§ظ„ط¹ظ‚ط¯ ظ…ط·ظ„ظˆط¨.'));
+            RAISE_APPLICATION_ERROR(-20292, ph_localization_pkg.localized_text('Contract start date is required.', 'ط·ع¾ط·آ§ط·آ±ط¸ظ¹ط·آ® ط·آ¨ط·آ¯ط·آ§ط¸ظ¹ط·آ© ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯ ط¸â€¦ط·آ·ط¸â€‍ط¸ث†ط·آ¨.'));
         END IF;
 
         IF p_end_date IS NOT NULL AND p_end_date < p_start_date THEN
-            RAISE_APPLICATION_ERROR(-20293, ph_localization_pkg.localized_text('Contract end date cannot be before start date.', 'ظ„ط§ ظٹظ…ظƒظ† ط£ظ† ظٹظƒظˆظ† طھط§ط±ظٹط® ظ†ظ‡ط§ظٹط© ط§ظ„ط¹ظ‚ط¯ ظ‚ط¨ظ„ طھط§ط±ظٹط® ط§ظ„ط¨ط¯ط§ظٹط©.'));
+            RAISE_APPLICATION_ERROR(-20293, ph_localization_pkg.localized_text('Contract end date cannot be before start date.', 'ط¸â€‍ط·آ§ ط¸ظ¹ط¸â€¦ط¸ئ’ط¸â€  ط·آ£ط¸â€  ط¸ظ¹ط¸ئ’ط¸ث†ط¸â€  ط·ع¾ط·آ§ط·آ±ط¸ظ¹ط·آ® ط¸â€ ط¸â€،ط·آ§ط¸ظ¹ط·آ© ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯ ط¸â€ڑط·آ¨ط¸â€‍ ط·ع¾ط·آ§ط·آ±ط¸ظ¹ط·آ® ط·آ§ط¸â€‍ط·آ¨ط·آ¯ط·آ§ط¸ظ¹ط·آ©.'));
         END IF;
     END require_contract_dates;
 
-    PROCEDURE require_effective_dates(p_effective_from IN DATE, p_effective_to IN DATE) IS
+PROCEDURE require_effective_dates(p_effective_from IN DATE, p_effective_to IN DATE) IS
     BEGIN
         IF p_effective_from IS NULL THEN
-            RAISE_APPLICATION_ERROR(-20294, ph_localization_pkg.localized_text('Effective from date is required.', 'طھط§ط±ظٹط® ط¨ط¯ط§ظٹط© ط§ظ„ط³ط±ظٹط§ظ† ظ…ط·ظ„ظˆط¨.'));
+            RAISE_APPLICATION_ERROR(-20294, ph_localization_pkg.localized_text('Effective from date is required.', 'ط·ع¾ط·آ§ط·آ±ط¸ظ¹ط·آ® ط·آ¨ط·آ¯ط·آ§ط¸ظ¹ط·آ© ط·آ§ط¸â€‍ط·آ³ط·آ±ط¸ظ¹ط·آ§ط¸â€  ط¸â€¦ط·آ·ط¸â€‍ط¸ث†ط·آ¨.'));
         END IF;
 
         IF p_effective_to IS NOT NULL AND p_effective_to < p_effective_from THEN
-            RAISE_APPLICATION_ERROR(-20295, ph_localization_pkg.localized_text('Effective to date cannot be before effective from date.', 'ظ„ط§ ظٹظ…ظƒظ† ط£ظ† ظٹظƒظˆظ† طھط§ط±ظٹط® ظ†ظ‡ط§ظٹط© ط§ظ„ط³ط±ظٹط§ظ† ظ‚ط¨ظ„ طھط§ط±ظٹط® ط§ظ„ط¨ط¯ط§ظٹط©.'));
+            RAISE_APPLICATION_ERROR(-20295, ph_localization_pkg.localized_text('Effective to date cannot be before effective from date.', 'ط¸â€‍ط·آ§ ط¸ظ¹ط¸â€¦ط¸ئ’ط¸â€  ط·آ£ط¸â€  ط¸ظ¹ط¸ئ’ط¸ث†ط¸â€  ط·ع¾ط·آ§ط·آ±ط¸ظ¹ط·آ® ط¸â€ ط¸â€،ط·آ§ط¸ظ¹ط·آ© ط·آ§ط¸â€‍ط·آ³ط·آ±ط¸ظ¹ط·آ§ط¸â€  ط¸â€ڑط·آ¨ط¸â€‍ ط·ع¾ط·آ§ط·آ±ط¸ظ¹ط·آ® ط·آ§ط¸â€‍ط·آ¨ط·آ¯ط·آ§ط¸ظ¹ط·آ©.'));
         END IF;
     END require_effective_dates;
 
     ----------------------------------------------------------------------
     -- Read implementations
     ----------------------------------------------------------------------
-    FUNCTION get_customers(p_customer_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR IS
-        l_result SYS_REFCURSOR;
-    BEGIN
-        OPEN l_result FOR
-        SELECT customer_id,
-        customer_name,
-        legal_name,
-        contact_email,
-        contact_phone,
-        is_active,
-        created_by,
-        created_at,
-        updated_by,
-        updated_at
-            FROM ph_erp_customers
-            WHERE (p_customer_id IS NULL OR customer_id = p_customer_id)
-                AND (p_is_active IS NULL OR is_active = p_is_active)
-                AND is_deleted = 0
-            ORDER BY customer_name, customer_id;
-        RETURN l_result;
-    END get_customers;
 
-    FUNCTION get_customer_users(p_customer_id IN NUMBER DEFAULT NULL, p_user_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR IS
-        l_result SYS_REFCURSOR;
+PROCEDURE set_error(p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_error_code      NUMBER := SQLCODE;
+        l_error_message   VARCHAR2(4000) := SQLERRM;
+        l_error_stack     CLOB := DBMS_UTILITY.FORMAT_ERROR_STACK;
+        l_error_backtrace CLOB := DBMS_UTILITY.FORMAT_ERROR_BACKTRACE;
     BEGIN
-        OPEN l_result FOR
-        SELECT u.user_id,
-        u.customer_id,
-        c.customer_name,
-        u.user_type,
-        u.email,
-        u.display_name,
-        u.must_change_password,
-        u.is_initial_admin,
-        u.is_active,
-        u.last_login_at,
-        u.created_by,
-        u.created_at,
-        u.updated_by,
-        u.updated_at
-            FROM ph_sec_users u
-        LEFT JOIN ph_erp_customers c
-            ON c.customer_id = u.customer_id
-                AND c.is_deleted = 0
-            WHERE (p_customer_id IS NULL OR u.customer_id = p_customer_id)
-                AND (p_user_id IS NULL OR u.user_id = p_user_id)
-                AND (p_is_active IS NULL OR u.is_active = p_is_active)
-                AND u.is_deleted = 0
-            ORDER BY u.customer_id, u.display_name, u.user_id;
-        RETURN l_result;
-    END get_customer_users;
+        ph_erp_contract_validation_pkg.log_error(
+            p_program_unit => $$PLSQL_UNIT,
+            p_error_location => l_error_backtrace,
+            p_error_code => l_error_code,
+            p_error_message => l_error_message,
+            p_error_stack => l_error_stack,
+            p_error_backtrace => l_error_backtrace
+        );
+        p_result_code := CASE WHEN l_error_code BETWEEN -20999 AND -20000 THEN 'V' ELSE 'E' END;
+        p_result_message := l_error_message;
+    END set_error;
 
-    FUNCTION get_contracts(p_customer_id IN NUMBER DEFAULT NULL, p_contract_id IN NUMBER DEFAULT NULL, p_product_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR IS
+    PROCEDURE raise_when_invalid(p_is_valid IN NUMBER, p_validation_message IN VARCHAR2) IS
+    BEGIN
+        IF NVL(p_is_valid, 0) = 0 THEN
+            RAISE_APPLICATION_ERROR(-20190, p_validation_message);
+        END IF;
+    END raise_when_invalid;
+
+FUNCTION get_contracts(p_customer_id IN NUMBER DEFAULT NULL, p_contract_id IN NUMBER DEFAULT NULL, p_product_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR IS
         l_result SYS_REFCURSOR;
     BEGIN
         OPEN l_result FOR
@@ -354,7 +289,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         RETURN l_result;
     END get_contracts;
 
-    FUNCTION get_contract_urls(p_contract_id IN NUMBER DEFAULT NULL, p_contract_url_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR IS
+FUNCTION get_contract_urls(p_contract_id IN NUMBER DEFAULT NULL, p_contract_url_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR IS
         l_result SYS_REFCURSOR;
     BEGIN
         OPEN l_result FOR
@@ -380,7 +315,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         RETURN l_result;
     END get_contract_urls;
 
-    FUNCTION get_contract_modules(p_contract_id IN NUMBER DEFAULT NULL, p_product_id IN NUMBER DEFAULT NULL, p_module_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR IS
+FUNCTION get_contract_modules(p_contract_id IN NUMBER DEFAULT NULL, p_product_id IN NUMBER DEFAULT NULL, p_module_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR IS
         l_result SYS_REFCURSOR;
     BEGIN
         OPEN l_result FOR
@@ -420,7 +355,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         RETURN l_result;
     END get_contract_modules;
 
-    FUNCTION get_contract_platforms(p_contract_id IN NUMBER DEFAULT NULL, p_product_id IN NUMBER DEFAULT NULL, p_module_id IN NUMBER DEFAULT NULL, p_platform_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR IS
+FUNCTION get_contract_platforms(p_contract_id IN NUMBER DEFAULT NULL, p_product_id IN NUMBER DEFAULT NULL, p_module_id IN NUMBER DEFAULT NULL, p_platform_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR IS
         l_result SYS_REFCURSOR;
     BEGIN
         OPEN l_result FOR
@@ -467,7 +402,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         RETURN l_result;
     END get_contract_platforms;
 
-    FUNCTION get_contract_features(p_contract_id IN NUMBER DEFAULT NULL, p_product_id IN NUMBER DEFAULT NULL, p_module_id IN NUMBER DEFAULT NULL, p_platform_id IN NUMBER DEFAULT NULL, p_feature_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR IS
+FUNCTION get_contract_features(p_contract_id IN NUMBER DEFAULT NULL, p_product_id IN NUMBER DEFAULT NULL, p_module_id IN NUMBER DEFAULT NULL, p_platform_id IN NUMBER DEFAULT NULL, p_feature_id IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL) RETURN SYS_REFCURSOR IS
         l_result SYS_REFCURSOR;
     BEGIN
         OPEN l_result FOR
@@ -529,146 +464,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
     -- Customer create/update/delete implementations
     ----------------------------------------------------------------------
 
-    PROCEDURE do_update_customer(
-        p_customer_id   IN NUMBER,
-        p_customer_name IN VARCHAR2 DEFAULT NULL,
-        p_legal_name    IN VARCHAR2 DEFAULT NULL,
-        p_contact_email IN VARCHAR2 DEFAULT NULL,
-        p_contact_phone IN VARCHAR2 DEFAULT NULL,
-        p_is_active     IN NUMBER DEFAULT NULL,
-        p_updated_by    IN NUMBER DEFAULT NULL
-    ) IS
-        l_exists NUMBER;
-    BEGIN
-        SELECT COUNT(*) INTO l_exists FROM ph_erp_customers WHERE customer_id = p_customer_id AND is_deleted = 0;
-        IF l_exists = 0 THEN
-            RAISE_APPLICATION_ERROR(-20210, ph_localization_pkg.localized_text('Customer was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ط§ظ„ط¹ظ…ظٹظ„.'));
-        END IF;
-
-        UPDATE ph_erp_customers
-            SET customer_name = CASE WHEN p_customer_name IS NOT NULL THEN TRIM(p_customer_name) ELSE customer_name END,
-                legal_name = CASE WHEN p_legal_name IS NOT NULL THEN TRIM(p_legal_name) ELSE legal_name END,
-                contact_email = CASE WHEN p_contact_email IS NOT NULL THEN LOWER(TRIM(p_contact_email)) ELSE contact_email END,
-                contact_phone = CASE WHEN p_contact_phone IS NOT NULL THEN TRIM(p_contact_phone) ELSE contact_phone END,
-                is_active = CASE WHEN p_is_active IS NOT NULL THEN p_is_active ELSE is_active END,
-                updated_by = p_updated_by
-            WHERE customer_id = p_customer_id
-                AND ((p_customer_name IS NOT NULL AND DECODE(customer_name, TRIM(p_customer_name), 0, 1) = 1)
-                OR (p_legal_name IS NOT NULL AND DECODE(legal_name, TRIM(p_legal_name), 0, 1) = 1)
-                OR (p_contact_email IS NOT NULL AND DECODE(contact_email, LOWER(TRIM(p_contact_email)), 0, 1) = 1)
-                OR (p_contact_phone IS NOT NULL AND DECODE(contact_phone, TRIM(p_contact_phone), 0, 1) = 1)
-                OR (p_is_active IS NOT NULL AND DECODE(is_active, p_is_active, 0, 1) = 1));
-    END do_update_customer;
-
-    PROCEDURE do_delete_customer(p_customer_id IN NUMBER, p_updated_by IN NUMBER) IS
-    BEGIN
-        UPDATE ph_erp_customers
-            SET is_deleted = 1,
-                updated_by = p_updated_by
-            WHERE customer_id = p_customer_id
-                AND is_deleted = 0;
-
-        IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20210, ph_localization_pkg.localized_text('Customer was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ط§ظ„ط¹ظ…ظٹظ„.'));
-        END IF;
-    END do_delete_customer;
-
-    PROCEDURE do_restore_customer(p_customer_id IN NUMBER, p_updated_by IN NUMBER) IS
-    BEGIN
-        UPDATE ph_erp_customers
-            SET is_deleted = 0,
-                deleted_by = NULL,
-                deleted_at = NULL,
-                updated_by = p_updated_by,
-                updated_at = SYSTIMESTAMP
-            WHERE customer_id = p_customer_id;
-
-        IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20210, ph_localization_pkg.localized_text('Customer was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ط§ظ„ط¹ظ…ظٹظ„.'));
-        END IF;
-    END do_restore_customer;
-
-    ----------------------------------------------------------------------
-    -- Customer user create/update/delete implementations
-    ----------------------------------------------------------------------
-
-    PROCEDURE do_update_customer_user(
-        p_user_id           IN NUMBER,
-        p_customer_id       IN NUMBER,
-        p_email             IN VARCHAR2 DEFAULT NULL,
-        p_display_name      IN VARCHAR2 DEFAULT NULL,
-        p_is_initial_admin  IN NUMBER DEFAULT NULL,
-        p_is_active         IN NUMBER DEFAULT NULL,
-        p_updated_by        IN NUMBER DEFAULT NULL
-    ) IS
-        l_exists NUMBER;
-    BEGIN
-        require_active_customer(p_customer_id);
-
-        SELECT COUNT(*) INTO l_exists
-            FROM ph_sec_users
-            WHERE user_id = p_user_id
-                AND customer_id = p_customer_id
-                AND user_type = 2
-                AND is_deleted = 0;
-        IF l_exists = 0 THEN
-            RAISE_APPLICATION_ERROR(-20220, ph_localization_pkg.localized_text('Customer user was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ظ…ط³طھط®ط¯ظ… ط§ظ„ط¹ظ…ظٹظ„.'));
-        END IF;
-
-        UPDATE ph_sec_users
-            SET email = CASE WHEN p_email IS NOT NULL THEN LOWER(TRIM(p_email)) ELSE email END,
-                display_name = CASE WHEN p_display_name IS NOT NULL THEN TRIM(p_display_name) ELSE display_name END,
-                is_initial_admin = CASE WHEN p_is_initial_admin IS NOT NULL THEN p_is_initial_admin ELSE is_initial_admin END,
-                is_active = CASE WHEN p_is_active IS NOT NULL THEN p_is_active ELSE is_active END,
-                updated_by = p_updated_by
-            WHERE user_id = p_user_id
-                AND customer_id = p_customer_id
-                AND user_type = 2
-                AND ((p_email IS NOT NULL AND DECODE(email, LOWER(TRIM(p_email)), 0, 1) = 1)
-                OR (p_display_name IS NOT NULL AND DECODE(display_name, TRIM(p_display_name), 0, 1) = 1)
-                OR (p_is_initial_admin IS NOT NULL AND DECODE(is_initial_admin, p_is_initial_admin, 0, 1) = 1)
-                OR (p_is_active IS NOT NULL AND DECODE(is_active, p_is_active, 0, 1) = 1));
-    END do_update_customer_user;
-
-    PROCEDURE do_delete_customer_user(p_user_id IN NUMBER, p_customer_id IN NUMBER, p_updated_by IN NUMBER) IS
-    BEGIN
-        UPDATE ph_sec_users
-            SET is_deleted = 1,
-                updated_by = p_updated_by
-            WHERE user_id = p_user_id
-                AND customer_id = p_customer_id
-                AND user_type = 2
-                AND is_deleted = 0;
-
-        IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20220, ph_localization_pkg.localized_text('Customer user was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ظ…ط³طھط®ط¯ظ… ط§ظ„ط¹ظ…ظٹظ„.'));
-        END IF;
-    END do_delete_customer_user;
-
-    PROCEDURE do_restore_customer_user(p_user_id IN NUMBER, p_customer_id IN NUMBER, p_updated_by IN NUMBER) IS
-    BEGIN
-        require_active_customer(p_customer_id);
-
-        UPDATE ph_sec_users
-            SET is_deleted = 0,
-                deleted_by = NULL,
-                deleted_at = NULL,
-                updated_by = p_updated_by,
-                updated_at = SYSTIMESTAMP
-            WHERE user_id = p_user_id
-                AND customer_id = p_customer_id
-                AND user_type = 2;
-
-        IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20220, ph_localization_pkg.localized_text('Customer user was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ظ…ط³طھط®ط¯ظ… ط§ظ„ط¹ظ…ظٹظ„.'));
-        END IF;
-    END do_restore_customer_user;
-
-    ----------------------------------------------------------------------
-    -- Contract create/update/delete implementations
-    ----------------------------------------------------------------------
-
-    PROCEDURE do_update_contract(
+PROCEDURE do_update_contract(
         p_contract_id IN NUMBER,
         p_contract_no IN VARCHAR2 DEFAULT NULL,
         p_customer_id IN NUMBER DEFAULT NULL,
@@ -692,7 +488,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
                     AND is_deleted = 0;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RAISE_APPLICATION_ERROR(-20211, ph_localization_pkg.localized_text('Contract was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ط§ظ„ط¹ظ‚ط¯.'));
+            RAISE_APPLICATION_ERROR(-20211, ph_localization_pkg.localized_text('Contract was not found.', 'ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آ¹ط·آ«ط¸ث†ط·آ± ط·آ¹ط¸â€‍ط¸â€° ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯.'));
             END;
 
             IF p_customer_id IS NOT NULL THEN
@@ -732,7 +528,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
 
     END do_update_contract;
 
-    PROCEDURE do_delete_contract(p_contract_id IN NUMBER, p_updated_by IN NUMBER) IS
+PROCEDURE do_delete_contract(p_contract_id IN NUMBER, p_updated_by IN NUMBER) IS
     BEGIN
         UPDATE ph_erp_contract_features
             SET is_deleted = 1, updated_by = p_updated_by
@@ -756,18 +552,18 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
                 AND is_deleted = 0;
 
         IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20211, ph_localization_pkg.localized_text('Contract was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ط§ظ„ط¹ظ‚ط¯.'));
+            RAISE_APPLICATION_ERROR(-20211, ph_localization_pkg.localized_text('Contract was not found.', 'ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آ¹ط·آ«ط¸ث†ط·آ± ط·آ¹ط¸â€‍ط¸â€° ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯.'));
         END IF;
     END do_delete_contract;
 
-    PROCEDURE do_restore_contract(p_contract_id IN NUMBER, p_updated_by IN NUMBER) IS
+PROCEDURE do_restore_contract(p_contract_id IN NUMBER, p_updated_by IN NUMBER) IS
     BEGIN
         UPDATE ph_erp_contracts
             SET is_deleted = 0, deleted_by = NULL, deleted_at = NULL, updated_by = p_updated_by, updated_at = SYSTIMESTAMP
             WHERE contract_id = p_contract_id;
 
         IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20211, ph_localization_pkg.localized_text('Contract was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ط§ظ„ط¹ظ‚ط¯.'));
+            RAISE_APPLICATION_ERROR(-20211, ph_localization_pkg.localized_text('Contract was not found.', 'ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آ¹ط·آ«ط¸ث†ط·آ± ط·آ¹ط¸â€‍ط¸â€° ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯.'));
         END IF;
     END do_restore_contract;
 
@@ -775,7 +571,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
     -- Contract URL create/update/delete implementations
     ----------------------------------------------------------------------
 
-    PROCEDURE do_update_contract_url(
+PROCEDURE do_update_contract_url(
         p_contract_url_id IN NUMBER,
         p_access_url      IN VARCHAR2 DEFAULT NULL,
         p_is_primary      IN NUMBER DEFAULT NULL,
@@ -788,7 +584,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
     BEGIN
         SELECT COUNT(*) INTO l_exists FROM ph_erp_contract_urls WHERE contract_url_id = p_contract_url_id AND is_deleted = 0;
         IF l_exists = 0 THEN
-            RAISE_APPLICATION_ERROR(-20212, ph_localization_pkg.localized_text('Contract URL was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ط±ط§ط¨ط· ط§ظ„ط¹ظ‚ط¯.'));
+            RAISE_APPLICATION_ERROR(-20212, ph_localization_pkg.localized_text('Contract URL was not found.', 'ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آ¹ط·آ«ط¸ث†ط·آ± ط·آ¹ط¸â€‍ط¸â€° ط·آ±ط·آ§ط·آ¨ط·آ· ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯.'));
         END IF;
 
         UPDATE ph_erp_contract_urls
@@ -812,7 +608,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         END IF;
     END do_update_contract_url;
 
-    PROCEDURE do_delete_contract_url(p_contract_url_id IN NUMBER, p_updated_by IN NUMBER) IS
+PROCEDURE do_delete_contract_url(p_contract_url_id IN NUMBER, p_updated_by IN NUMBER) IS
         l_contract_id ph_erp_contract_urls.contract_id%TYPE;
     BEGIN
         SELECT contract_id
@@ -826,16 +622,16 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
                 AND is_deleted = 0;
 
         IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20212, ph_localization_pkg.localized_text('Contract URL was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ط±ط§ط¨ط· ط§ظ„ط¹ظ‚ط¯.'));
+            RAISE_APPLICATION_ERROR(-20212, ph_localization_pkg.localized_text('Contract URL was not found.', 'ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آ¹ط·آ«ط¸ث†ط·آ± ط·آ¹ط¸â€‍ط¸â€° ط·آ±ط·آ§ط·آ¨ط·آ· ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯.'));
         END IF;
 
         ensure_primary_url(l_contract_id, p_updated_by);
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RAISE_APPLICATION_ERROR(-20212, ph_localization_pkg.localized_text('Contract URL was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ط±ط§ط¨ط· ط§ظ„ط¹ظ‚ط¯.'));
+            RAISE_APPLICATION_ERROR(-20212, ph_localization_pkg.localized_text('Contract URL was not found.', 'ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آ¹ط·آ«ط¸ث†ط·آ± ط·آ¹ط¸â€‍ط¸â€° ط·آ±ط·آ§ط·آ¨ط·آ· ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯.'));
     END do_delete_contract_url;
 
-    PROCEDURE do_restore_contract_url(p_contract_url_id IN NUMBER, p_updated_by IN NUMBER) IS
+PROCEDURE do_restore_contract_url(p_contract_url_id IN NUMBER, p_updated_by IN NUMBER) IS
         l_contract_id ph_erp_contract_urls.contract_id%TYPE;
     BEGIN
         SELECT contract_id
@@ -848,20 +644,20 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
             WHERE contract_url_id = p_contract_url_id;
 
         IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20212, ph_localization_pkg.localized_text('Contract URL was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ط±ط§ط¨ط· ط§ظ„ط¹ظ‚ط¯.'));
+            RAISE_APPLICATION_ERROR(-20212, ph_localization_pkg.localized_text('Contract URL was not found.', 'ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آ¹ط·آ«ط¸ث†ط·آ± ط·آ¹ط¸â€‍ط¸â€° ط·آ±ط·آ§ط·آ¨ط·آ· ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯.'));
         END IF;
 
         ensure_primary_url(l_contract_id, p_updated_by);
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RAISE_APPLICATION_ERROR(-20212, ph_localization_pkg.localized_text('Contract URL was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ط±ط§ط¨ط· ط§ظ„ط¹ظ‚ط¯.'));
+            RAISE_APPLICATION_ERROR(-20212, ph_localization_pkg.localized_text('Contract URL was not found.', 'ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آ¹ط·آ«ط¸ث†ط·آ± ط·آ¹ط¸â€‍ط¸â€° ط·آ±ط·آ§ط·آ¨ط·آ· ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯.'));
     END do_restore_contract_url;
 
     ----------------------------------------------------------------------
     -- Contract module create/update/delete implementations
     ----------------------------------------------------------------------
 
-    PROCEDURE do_update_contract_module(
+PROCEDURE do_update_contract_module(
         p_contract_id    IN NUMBER,
         p_product_id     IN NUMBER,
         p_module_id      IN NUMBER,
@@ -883,7 +679,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
                     AND is_deleted = 0;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RAISE_APPLICATION_ERROR(-20213, ph_localization_pkg.localized_text('Contract module was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ظˆط­ط¯ط© ط§ظ„ط¹ظ‚ط¯.'));
+            RAISE_APPLICATION_ERROR(-20213, ph_localization_pkg.localized_text('Contract module was not found.', 'ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آ¹ط·آ«ط¸ث†ط·آ± ط·آ¹ط¸â€‍ط¸â€° ط¸ث†ط·آ­ط·آ¯ط·آ© ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯.'));
             END;
 
             UPDATE ph_erp_contract_modules
@@ -899,7 +695,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
                     OR (p_is_active IS NOT NULL AND DECODE(is_active, p_is_active, 0, 1) = 1));
     END do_update_contract_module;
 
-    PROCEDURE do_delete_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_updated_by IN NUMBER) IS
+PROCEDURE do_delete_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_updated_by IN NUMBER) IS
     BEGIN
         UPDATE ph_erp_contract_features
             SET is_deleted = 1, updated_by = p_updated_by
@@ -921,11 +717,11 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
                 AND is_deleted = 0;
 
         IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20213, ph_localization_pkg.localized_text('Contract module was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ظˆط­ط¯ط© ط§ظ„ط¹ظ‚ط¯.'));
+            RAISE_APPLICATION_ERROR(-20213, ph_localization_pkg.localized_text('Contract module was not found.', 'ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آ¹ط·آ«ط¸ث†ط·آ± ط·آ¹ط¸â€‍ط¸â€° ط¸ث†ط·آ­ط·آ¯ط·آ© ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯.'));
         END IF;
     END do_delete_contract_module;
 
-    PROCEDURE do_restore_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_updated_by IN NUMBER) IS
+PROCEDURE do_restore_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_updated_by IN NUMBER) IS
     BEGIN
         require_valid_contract_module(p_contract_id, p_product_id, p_module_id);
 
@@ -936,7 +732,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
                 AND module_id = p_module_id;
 
         IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20213, ph_localization_pkg.localized_text('Contract module was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ظˆط­ط¯ط© ط§ظ„ط¹ظ‚ط¯.'));
+            RAISE_APPLICATION_ERROR(-20213, ph_localization_pkg.localized_text('Contract module was not found.', 'ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آ¹ط·آ«ط¸ث†ط·آ± ط·آ¹ط¸â€‍ط¸â€° ط¸ث†ط·آ­ط·آ¯ط·آ© ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯.'));
         END IF;
     END do_restore_contract_module;
 
@@ -944,7 +740,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
     -- Contract feature create/update/delete implementations
     ----------------------------------------------------------------------
 
-    PROCEDURE do_update_contract_feature(
+PROCEDURE do_update_contract_feature(
         p_contract_id    IN NUMBER,
         p_product_id     IN NUMBER,
         p_module_id      IN NUMBER,
@@ -971,7 +767,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
                     AND is_deleted = 0;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RAISE_APPLICATION_ERROR(-20214, ph_localization_pkg.localized_text('Contract feature was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ظ…ظٹط²ط© ط§ظ„ط¹ظ‚ط¯.'));
+            RAISE_APPLICATION_ERROR(-20214, ph_localization_pkg.localized_text('Contract feature was not found.', 'ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آ¹ط·آ«ط¸ث†ط·آ± ط·آ¹ط¸â€‍ط¸â€° ط¸â€¦ط¸ظ¹ط·آ²ط·آ© ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯.'));
             END;
 
             UPDATE ph_erp_contract_features
@@ -991,7 +787,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
                     OR (p_is_active IS NOT NULL AND DECODE(is_active, p_is_active, 0, 1) = 1));
     END do_update_contract_feature;
 
-    PROCEDURE do_delete_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_updated_by IN NUMBER) IS
+PROCEDURE do_delete_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_updated_by IN NUMBER) IS
     BEGIN
         UPDATE ph_erp_contract_features
             SET is_deleted = 1, updated_by = p_updated_by
@@ -1003,11 +799,11 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
                 AND is_deleted = 0;
 
         IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20214, ph_localization_pkg.localized_text('Contract feature was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ظ…ظٹط²ط© ط§ظ„ط¹ظ‚ط¯.'));
+            RAISE_APPLICATION_ERROR(-20214, ph_localization_pkg.localized_text('Contract feature was not found.', 'ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آ¹ط·آ«ط¸ث†ط·آ± ط·آ¹ط¸â€‍ط¸â€° ط¸â€¦ط¸ظ¹ط·آ²ط·آ© ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯.'));
         END IF;
     END do_delete_contract_feature;
 
-    PROCEDURE do_restore_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_updated_by IN NUMBER) IS
+PROCEDURE do_restore_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_updated_by IN NUMBER) IS
     BEGIN
         require_valid_contract_feature(p_contract_id, p_product_id, p_module_id, p_platform_id, p_feature_id);
 
@@ -1020,178 +816,20 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
                 AND feature_id = p_feature_id;
 
         IF SQL%ROWCOUNT = 0 THEN
-            RAISE_APPLICATION_ERROR(-20214, ph_localization_pkg.localized_text('Contract feature was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ظ…ظٹط²ط© ط§ظ„ط¹ظ‚ط¯.'));
+            RAISE_APPLICATION_ERROR(-20214, ph_localization_pkg.localized_text('Contract feature was not found.', 'ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آ¹ط·آ«ط¸ث†ط·آ± ط·آ¹ط¸â€‍ط¸â€° ط¸â€¦ط¸ظ¹ط·آ²ط·آ© ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯.'));
         END IF;
     END do_restore_contract_feature;
 
     ----------------------------------------------------------------------
     -- Result-returning create/update/delete/restore implementations
     ----------------------------------------------------------------------
-    PROCEDURE set_success(p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2, p_message IN VARCHAR2) IS
+
+PROCEDURE create_contract(p_contract_no IN VARCHAR2, p_customer_id IN NUMBER, p_product_id IN NUMBER, p_start_date IN DATE, p_end_date IN DATE DEFAULT NULL, p_payment_cycle IN NUMBER, p_notes_en IN VARCHAR2 DEFAULT NULL, p_notes_ar IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_contract_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
-        p_result_code := 'S';
-        p_result_message := p_message;
-    END set_success;
-
-    PROCEDURE set_error(p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
-        l_error_code      NUMBER := SQLCODE;
-        l_error_message   VARCHAR2(4000) := SQLERRM;
-        l_error_stack     CLOB := DBMS_UTILITY.FORMAT_ERROR_STACK;
-        l_error_backtrace CLOB := DBMS_UTILITY.FORMAT_ERROR_BACKTRACE;
-    BEGIN
-        ph_erp_customer_error_log_pkg.log_error(
-            p_program_unit => $$PLSQL_UNIT,
-            p_error_location => l_error_backtrace,
-            p_error_code => l_error_code,
-            p_error_message => l_error_message,
-            p_error_stack => l_error_stack,
-            p_error_backtrace => l_error_backtrace
-        );
-        p_result_code := CASE WHEN l_error_code BETWEEN -20999 AND -20000 THEN 'V' ELSE 'E' END;
-        p_result_message := l_error_message;
-    END set_error;
-
-    PROCEDURE create_customer(p_customer_name IN VARCHAR2, p_legal_name IN VARCHAR2 DEFAULT NULL, p_contact_email IN VARCHAR2 DEFAULT NULL, p_contact_phone IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_customer_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
-    BEGIN
-        require_text(p_customer_name, 'Customer name');
-
-        INSERT INTO ph_erp_customers (
-        customer_name, legal_name, contact_email, contact_phone, is_active, created_by
-        ) VALUES (
-        TRIM(p_customer_name), TRIM(p_legal_name), LOWER(TRIM(p_contact_email)), TRIM(p_contact_phone), 1, p_created_by
-        ) RETURNING customer_id INTO p_customer_id;
-
-        set_success(p_result_code, p_result_message, 'Customer created successfully.');
-    EXCEPTION
-        WHEN OTHERS THEN
-            set_error(p_result_code, p_result_message);
-    END create_customer;
-
-    PROCEDURE put_customer(p_customer_name IN VARCHAR2, p_legal_name IN VARCHAR2 DEFAULT NULL, p_contact_email IN VARCHAR2 DEFAULT NULL, p_contact_phone IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_customer_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
-        l_customer_id NUMBER;
-    BEGIN
-        SELECT MIN(customer_id) INTO l_customer_id
-          FROM ph_erp_customers
-         WHERE customer_name = TRIM(p_customer_name);
-
-        IF l_customer_id IS NOT NULL THEN
-            p_customer_id := l_customer_id;
-            restore_customer(l_customer_id, p_created_by, p_result_code, p_result_message);
-            IF p_result_code <> 'S' THEN RETURN; END IF;
-            update_customer(l_customer_id, p_customer_name, p_legal_name, p_contact_email, p_contact_phone, 1, p_created_by, p_result_code, p_result_message);
-            RETURN;
-        END IF;
-
-        create_customer(p_customer_name, p_legal_name, p_contact_email, p_contact_phone, p_created_by, p_customer_id, p_result_code, p_result_message);
-    END put_customer;
-
-    PROCEDURE update_customer(p_customer_id IN NUMBER, p_customer_name IN VARCHAR2 DEFAULT NULL, p_legal_name IN VARCHAR2 DEFAULT NULL, p_contact_email IN VARCHAR2 DEFAULT NULL, p_contact_phone IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
-    BEGIN
-        do_update_customer(p_customer_id, p_customer_name, p_legal_name, p_contact_email, p_contact_phone, p_is_active, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Customer updated successfully.');
-    EXCEPTION
-        WHEN OTHERS THEN
-            set_error(p_result_code, p_result_message);
-    END update_customer;
-
-    PROCEDURE delete_customer(p_customer_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
-    BEGIN
-        do_delete_customer(p_customer_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Customer deleted successfully.');
-    EXCEPTION
-        WHEN OTHERS THEN
-            set_error(p_result_code, p_result_message);
-    END delete_customer;
-
-    PROCEDURE restore_customer(p_customer_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
-    BEGIN
-        do_restore_customer(p_customer_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Customer restored successfully.');
-    EXCEPTION
-        WHEN OTHERS THEN
-            set_error(p_result_code, p_result_message);
-    END restore_customer;
-
-    PROCEDURE create_customer_user(p_customer_id IN NUMBER, p_email IN VARCHAR2, p_display_name IN VARCHAR2, p_is_initial_admin IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_user_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
-    BEGIN
-        require_active_customer(p_customer_id);
-        require_text(p_email, 'Email');
-        require_text(p_display_name, 'Display name');
-        require_flag(p_is_initial_admin, 'Initial admin flag');
-
-        INSERT INTO ph_sec_users (
-        customer_id,
-        user_type,
-        email,
-        display_name,
-        must_change_password,
-        is_initial_admin,
-        is_active,
-        created_by
-        ) VALUES (
-        p_customer_id,
-        2,
-        LOWER(TRIM(p_email)),
-        TRIM(p_display_name),
-        1,
-        p_is_initial_admin,
-        1,
-        p_created_by
-        ) RETURNING user_id INTO p_user_id;
-
-        set_success(p_result_code, p_result_message, 'Customer user created successfully.');
-    EXCEPTION
-        WHEN OTHERS THEN
-            set_error(p_result_code, p_result_message);
-    END create_customer_user;
-
-    PROCEDURE put_customer_user(p_customer_id IN NUMBER, p_email IN VARCHAR2, p_display_name IN VARCHAR2, p_is_initial_admin IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_user_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
-        l_user_id NUMBER;
-    BEGIN
-        SELECT MIN(user_id) INTO l_user_id
-          FROM ph_sec_users
-         WHERE email = LOWER(TRIM(p_email));
-
-        IF l_user_id IS NOT NULL THEN
-            p_user_id := l_user_id;
-            restore_customer_user(l_user_id, p_customer_id, p_created_by, p_result_code, p_result_message);
-            IF p_result_code <> 'S' THEN RETURN; END IF;
-            update_customer_user(l_user_id, p_customer_id, p_email, p_display_name, p_is_initial_admin, 1, p_created_by, p_result_code, p_result_message);
-            RETURN;
-        END IF;
-
-        create_customer_user(p_customer_id, p_email, p_display_name, p_is_initial_admin, p_created_by, p_user_id, p_result_code, p_result_message);
-    END put_customer_user;
-
-    PROCEDURE update_customer_user(p_user_id IN NUMBER, p_customer_id IN NUMBER, p_email IN VARCHAR2 DEFAULT NULL, p_display_name IN VARCHAR2 DEFAULT NULL, p_is_initial_admin IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
-    BEGIN
-        do_update_customer_user(p_user_id, p_customer_id, p_email, p_display_name, p_is_initial_admin, p_is_active, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Customer user updated successfully.');
-    EXCEPTION
-        WHEN OTHERS THEN
-            set_error(p_result_code, p_result_message);
-    END update_customer_user;
-
-    PROCEDURE delete_customer_user(p_user_id IN NUMBER, p_customer_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
-    BEGIN
-        do_delete_customer_user(p_user_id, p_customer_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Customer user deleted successfully.');
-    EXCEPTION
-        WHEN OTHERS THEN
-            set_error(p_result_code, p_result_message);
-    END delete_customer_user;
-
-    PROCEDURE restore_customer_user(p_user_id IN NUMBER, p_customer_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
-    BEGIN
-        do_restore_customer_user(p_user_id, p_customer_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Customer user restored successfully.');
-    EXCEPTION
-        WHEN OTHERS THEN
-            set_error(p_result_code, p_result_message);
-    END restore_customer_user;
-
-    PROCEDURE create_contract(p_contract_no IN VARCHAR2, p_customer_id IN NUMBER, p_product_id IN NUMBER, p_start_date IN DATE, p_end_date IN DATE DEFAULT NULL, p_payment_cycle IN NUMBER, p_notes_en IN VARCHAR2 DEFAULT NULL, p_notes_ar IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_contract_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
-    BEGIN
+        ph_erp_contract_validation_pkg.validate_create_contract(p_contract_no, p_customer_id, p_product_id, p_start_date, p_end_date, p_payment_cycle, p_notes_en, p_notes_ar, p_created_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         require_text(p_contract_no, 'Contract number');
         require_active_customer(p_customer_id);
         require_contract_product(p_product_id);
@@ -1206,13 +844,13 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         1, p_notes_en, p_notes_ar, p_created_by
         ) RETURNING contract_id INTO p_contract_id;
 
-        set_success(p_result_code, p_result_message, 'Contract created successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract created successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_contract;
 
-    PROCEDURE put_contract(p_contract_no IN VARCHAR2, p_customer_id IN NUMBER, p_product_id IN NUMBER, p_start_date IN DATE, p_end_date IN DATE DEFAULT NULL, p_payment_cycle IN NUMBER, p_notes_en IN VARCHAR2 DEFAULT NULL, p_notes_ar IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_contract_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE put_contract(p_contract_no IN VARCHAR2, p_customer_id IN NUMBER, p_product_id IN NUMBER, p_start_date IN DATE, p_end_date IN DATE DEFAULT NULL, p_payment_cycle IN NUMBER, p_notes_en IN VARCHAR2 DEFAULT NULL, p_notes_ar IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_contract_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_contract_id NUMBER;
     BEGIN
         SELECT MIN(contract_id) INTO l_contract_id
@@ -1230,35 +868,51 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         create_contract(p_contract_no, p_customer_id, p_product_id, p_start_date, p_end_date, p_payment_cycle, p_notes_en, p_notes_ar, p_created_by, p_contract_id, p_result_code, p_result_message);
     END put_contract;
 
-    PROCEDURE update_contract(p_contract_id IN NUMBER, p_contract_no IN VARCHAR2 DEFAULT NULL, p_customer_id IN NUMBER DEFAULT NULL, p_product_id IN NUMBER DEFAULT NULL, p_start_date IN DATE DEFAULT NULL, p_end_date IN DATE DEFAULT NULL, p_payment_cycle IN NUMBER DEFAULT NULL, p_notes_en IN VARCHAR2 DEFAULT NULL, p_notes_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE update_contract(p_contract_id IN NUMBER, p_contract_no IN VARCHAR2 DEFAULT NULL, p_customer_id IN NUMBER DEFAULT NULL, p_product_id IN NUMBER DEFAULT NULL, p_start_date IN DATE DEFAULT NULL, p_end_date IN DATE DEFAULT NULL, p_payment_cycle IN NUMBER DEFAULT NULL, p_notes_en IN VARCHAR2 DEFAULT NULL, p_notes_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
+        ph_erp_contract_validation_pkg.validate_update_contract(p_contract_id, p_contract_no, p_customer_id, p_product_id, p_start_date, p_end_date, p_payment_cycle, p_notes_en, p_notes_ar, p_is_active, p_updated_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         do_update_contract(p_contract_id, p_contract_no, p_customer_id, p_product_id, p_start_date, p_end_date, p_payment_cycle, p_notes_en, p_notes_ar, p_is_active, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Contract updated successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END update_contract;
 
-    PROCEDURE delete_contract(p_contract_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE delete_contract(p_contract_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
+        ph_erp_contract_validation_pkg.validate_delete_contract(p_contract_id, p_updated_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         do_delete_contract(p_contract_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Contract deleted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END delete_contract;
 
-    PROCEDURE restore_contract(p_contract_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE restore_contract(p_contract_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
+        ph_erp_contract_validation_pkg.validate_restore_contract(p_contract_id, p_updated_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         do_restore_contract(p_contract_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Contract restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END restore_contract;
 
-    PROCEDURE create_contract_url(p_contract_id IN NUMBER, p_access_url IN VARCHAR2, p_is_primary IN NUMBER DEFAULT 1, p_created_by IN NUMBER DEFAULT NULL, p_contract_url_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE create_contract_url(p_contract_id IN NUMBER, p_access_url IN VARCHAR2, p_is_primary IN NUMBER DEFAULT 1, p_created_by IN NUMBER DEFAULT NULL, p_contract_url_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
+        ph_erp_contract_validation_pkg.validate_create_contract_url(p_contract_id, p_access_url, p_is_primary, p_created_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         require_text(p_access_url, 'Contract access URL');
         require_flag(p_is_primary, 'Primary URL flag');
 
@@ -1274,13 +928,13 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
             ensure_primary_url(p_contract_id, p_created_by);
         END IF;
 
-        set_success(p_result_code, p_result_message, 'Contract URL created successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract URL created successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_contract_url;
 
-    PROCEDURE put_contract_url(p_contract_id IN NUMBER, p_access_url IN VARCHAR2, p_is_primary IN NUMBER DEFAULT 1, p_created_by IN NUMBER DEFAULT NULL, p_contract_url_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE put_contract_url(p_contract_id IN NUMBER, p_access_url IN VARCHAR2, p_is_primary IN NUMBER DEFAULT 1, p_created_by IN NUMBER DEFAULT NULL, p_contract_url_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_contract_url_id NUMBER;
     BEGIN
         SELECT MIN(contract_url_id) INTO l_contract_url_id
@@ -1299,35 +953,51 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         create_contract_url(p_contract_id, p_access_url, p_is_primary, p_created_by, p_contract_url_id, p_result_code, p_result_message);
     END put_contract_url;
 
-    PROCEDURE update_contract_url(p_contract_url_id IN NUMBER, p_access_url IN VARCHAR2 DEFAULT NULL, p_is_primary IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE update_contract_url(p_contract_url_id IN NUMBER, p_access_url IN VARCHAR2 DEFAULT NULL, p_is_primary IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
+        ph_erp_contract_validation_pkg.validate_update_contract_url(p_contract_url_id, p_access_url, p_is_primary, p_is_active, p_updated_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         do_update_contract_url(p_contract_url_id, p_access_url, p_is_primary, p_is_active, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Contract URL updated successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract URL updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END update_contract_url;
 
-    PROCEDURE delete_contract_url(p_contract_url_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE delete_contract_url(p_contract_url_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
+        ph_erp_contract_validation_pkg.validate_delete_contract_url(p_contract_url_id, p_updated_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         do_delete_contract_url(p_contract_url_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Contract URL deleted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract URL deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END delete_contract_url;
 
-    PROCEDURE restore_contract_url(p_contract_url_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE restore_contract_url(p_contract_url_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
+        ph_erp_contract_validation_pkg.validate_restore_contract_url(p_contract_url_id, p_updated_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         do_restore_contract_url(p_contract_url_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Contract URL restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract URL restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END restore_contract_url;
 
-    PROCEDURE create_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE create_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
+        ph_erp_contract_validation_pkg.validate_create_contract_module(p_contract_id, p_product_id, p_module_id, p_effective_from, p_effective_to, p_created_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         require_valid_contract_module(p_contract_id, p_product_id, p_module_id);
         require_effective_dates(p_effective_from, p_effective_to);
 
@@ -1349,46 +1019,62 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         INSERT (contract_id, product_id, module_id, is_active, effective_from, effective_to, created_by)
             VALUES (source.contract_id, source.product_id, source.module_id, 1, p_effective_from, p_effective_to, p_created_by);
 
-        set_success(p_result_code, p_result_message, 'Contract module created successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract module created successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_contract_module;
 
-    PROCEDURE put_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE put_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
     BEGIN
         create_contract_module(p_contract_id, p_product_id, p_module_id, p_effective_from, p_effective_to, p_created_by, p_result_code, p_result_message);
     END put_contract_module;
 
-    PROCEDURE update_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_effective_from IN DATE DEFAULT NULL, p_effective_to IN DATE DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE update_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_effective_from IN DATE DEFAULT NULL, p_effective_to IN DATE DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
+        ph_erp_contract_validation_pkg.validate_update_contract_module(p_contract_id, p_product_id, p_module_id, p_effective_from, p_effective_to, p_is_active, p_updated_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         do_update_contract_module(p_contract_id, p_product_id, p_module_id, p_effective_from, p_effective_to, p_is_active, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Contract module updated successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract module updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END update_contract_module;
 
-    PROCEDURE delete_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE delete_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
+        ph_erp_contract_validation_pkg.validate_delete_contract_module(p_contract_id, p_product_id, p_module_id, p_updated_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         do_delete_contract_module(p_contract_id, p_product_id, p_module_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Contract module deleted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract module deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END delete_contract_module;
 
-    PROCEDURE restore_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE restore_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
+        ph_erp_contract_validation_pkg.validate_restore_contract_module(p_contract_id, p_product_id, p_module_id, p_updated_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         do_restore_contract_module(p_contract_id, p_product_id, p_module_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Contract module restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract module restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END restore_contract_module;
 
-    PROCEDURE create_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_agreed_price IN NUMBER DEFAULT NULL, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE create_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_agreed_price IN NUMBER DEFAULT NULL, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
+        ph_erp_contract_validation_pkg.validate_create_contract_feature(p_contract_id, p_product_id, p_module_id, p_platform_id, p_feature_id, p_agreed_price, p_effective_from, p_effective_to, p_created_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         require_valid_contract_feature(p_contract_id, p_product_id, p_module_id, p_platform_id, p_feature_id);
         require_effective_dates(p_effective_from, p_effective_to);
 
@@ -1438,39 +1124,51 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         INSERT (contract_id, product_id, module_id, platform_id, feature_id, agreed_price, is_active, effective_from, effective_to, created_by)
             VALUES (source.contract_id, source.product_id, source.module_id, source.platform_id, source.feature_id, p_agreed_price, 1, p_effective_from, p_effective_to, p_created_by);
 
-        set_success(p_result_code, p_result_message, 'Contract feature created successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract feature created successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_contract_feature;
 
-    PROCEDURE put_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_agreed_price IN NUMBER DEFAULT NULL, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE put_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_agreed_price IN NUMBER DEFAULT NULL, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
     BEGIN
         create_contract_feature(p_contract_id, p_product_id, p_module_id, p_platform_id, p_feature_id, p_agreed_price, p_effective_from, p_effective_to, p_created_by, p_result_code, p_result_message);
     END put_contract_feature;
 
-    PROCEDURE update_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_agreed_price IN NUMBER DEFAULT NULL, p_effective_from IN DATE DEFAULT NULL, p_effective_to IN DATE DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE update_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_agreed_price IN NUMBER DEFAULT NULL, p_effective_from IN DATE DEFAULT NULL, p_effective_to IN DATE DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
+        ph_erp_contract_validation_pkg.validate_update_contract_feature(p_contract_id, p_product_id, p_module_id, p_platform_id, p_feature_id, p_agreed_price, p_effective_from, p_effective_to, p_is_active, p_updated_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         do_update_contract_feature(p_contract_id, p_product_id, p_module_id, p_platform_id, p_feature_id, p_agreed_price, p_effective_from, p_effective_to, p_is_active, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Contract feature updated successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract feature updated successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END update_contract_feature;
 
-    PROCEDURE delete_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE delete_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
+        ph_erp_contract_validation_pkg.validate_delete_contract_feature(p_contract_id, p_product_id, p_module_id, p_platform_id, p_feature_id, p_updated_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         do_delete_contract_feature(p_contract_id, p_product_id, p_module_id, p_platform_id, p_feature_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Contract feature deleted successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract feature deleted successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END delete_contract_feature;
 
-    PROCEDURE restore_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+PROCEDURE restore_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_is_valid NUMBER;
+        l_validation_message VARCHAR2(4000);
     BEGIN
+        ph_erp_contract_validation_pkg.validate_restore_contract_feature(p_contract_id, p_product_id, p_module_id, p_platform_id, p_feature_id, p_updated_by, l_is_valid, l_validation_message);
+        raise_when_invalid(l_is_valid, l_validation_message);
         do_restore_contract_feature(p_contract_id, p_product_id, p_module_id, p_platform_id, p_feature_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Contract feature restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Contract feature restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1479,7 +1177,8 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
     ----------------------------------------------------------------------
     -- Contract URL maintenance implementations
     ----------------------------------------------------------------------
-    PROCEDURE set_primary_url(p_contract_url_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL) IS
+
+PROCEDURE set_primary_url(p_contract_url_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL) IS
         l_contract_id ph_erp_contract_urls.contract_id%TYPE;
     BEGIN
         SELECT contract_id INTO l_contract_id
@@ -1505,10 +1204,10 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
                 AND is_deleted = 0;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RAISE_APPLICATION_ERROR(-20200, ph_localization_pkg.localized_text('Contract URL was not found.', 'ظ„ظ… ظٹطھظ… ط§ظ„ط¹ط«ظˆط± ط¹ظ„ظ‰ ط±ط§ط¨ط· ط§ظ„ط¹ظ‚ط¯.'));
+            RAISE_APPLICATION_ERROR(-20200, ph_localization_pkg.localized_text('Contract URL was not found.', 'ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آ¹ط·آ«ط¸ث†ط·آ± ط·آ¹ط¸â€‍ط¸â€° ط·آ±ط·آ§ط·آ¨ط·آ· ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯.'));
     END set_primary_url;
 
-    PROCEDURE ensure_primary_url(p_contract_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL) IS
+PROCEDURE ensure_primary_url(p_contract_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL) IS
         l_contract_url_id ph_erp_contract_urls.contract_url_id%TYPE;
     BEGIN
         IF has_primary_url(p_contract_id) = 1 THEN
@@ -1529,25 +1228,27 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
     ----------------------------------------------------------------------
     -- Public requirement wrappers
     ----------------------------------------------------------------------
-    PROCEDURE require_active_customer(p_customer_id IN NUMBER) IS
+
+PROCEDURE require_active_customer(p_customer_id IN NUMBER) IS
     BEGIN
         IF is_active_customer(p_customer_id) = 0 THEN
-            RAISE_APPLICATION_ERROR(-20201, ph_localization_pkg.localized_text('Customer is not active or was not found.', 'ط§ظ„ط¹ظ…ظٹظ„ ط؛ظٹط± ظ†ط´ط· ط£ظˆ ط؛ظٹط± ظ…ظˆط¬ظˆط¯.'));
+            RAISE_APPLICATION_ERROR(-20201, ph_localization_pkg.localized_text('Customer is not active or was not found.', 'ط·آ§ط¸â€‍ط·آ¹ط¸â€¦ط¸ظ¹ط¸â€‍ ط·ط›ط¸ظ¹ط·آ± ط¸â€ ط·آ´ط·آ· ط·آ£ط¸ث† ط·ط›ط¸ظ¹ط·آ± ط¸â€¦ط¸ث†ط·آ¬ط¸ث†ط·آ¯.'));
         END IF;
     END require_active_customer;
 
-    PROCEDURE require_valid_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER) IS
+PROCEDURE require_valid_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER) IS
     BEGIN
         IF is_module_valid_for_contract(p_contract_id, p_product_id, p_module_id) = 0 THEN
-            RAISE_APPLICATION_ERROR(-20202, ph_localization_pkg.localized_text('Module is not valid for the selected contract.', 'ط§ظ„ظˆط­ط¯ط© ط؛ظٹط± طµط§ظ„ط­ط© ظ„ظ„ط¹ظ‚ط¯ ط§ظ„ظ…ط­ط¯ط¯.'));
+            RAISE_APPLICATION_ERROR(-20202, ph_localization_pkg.localized_text('Module is not valid for the selected contract.', 'ط·آ§ط¸â€‍ط¸ث†ط·آ­ط·آ¯ط·آ© ط·ط›ط¸ظ¹ط·آ± ط·آµط·آ§ط¸â€‍ط·آ­ط·آ© ط¸â€‍ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯ ط·آ§ط¸â€‍ط¸â€¦ط·آ­ط·آ¯ط·آ¯.'));
         END IF;
     END require_valid_contract_module;
 
-    PROCEDURE require_valid_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER) IS
+PROCEDURE require_valid_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER) IS
     BEGIN
         IF is_feature_valid_for_contract(p_contract_id, p_product_id, p_module_id, p_platform_id, p_feature_id) = 0 THEN
-            RAISE_APPLICATION_ERROR(-20203, ph_localization_pkg.localized_text('Feature is not valid for the selected contract module.', 'ط§ظ„ظ…ظٹط²ط© ط؛ظٹط± طµط§ظ„ط­ط© ظ„ظˆط­ط¯ط© ط§ظ„ط¹ظ‚ط¯ ط§ظ„ظ…ط­ط¯ط¯ط©.'));
+            RAISE_APPLICATION_ERROR(-20203, ph_localization_pkg.localized_text('Feature is not valid for the selected contract module.', 'ط·آ§ط¸â€‍ط¸â€¦ط¸ظ¹ط·آ²ط·آ© ط·ط›ط¸ظ¹ط·آ± ط·آµط·آ§ط¸â€‍ط·آ­ط·آ© ط¸â€‍ط¸ث†ط·آ­ط·آ¯ط·آ© ط·آ§ط¸â€‍ط·آ¹ط¸â€ڑط·آ¯ ط·آ§ط¸â€‍ط¸â€¦ط·آ­ط·آ¯ط·آ¯ط·آ©.'));
         END IF;
     END require_valid_contract_feature;
-END ph_erp_customer_contract_pkg;
+END ph_erp_contract_pkg;
 /
+

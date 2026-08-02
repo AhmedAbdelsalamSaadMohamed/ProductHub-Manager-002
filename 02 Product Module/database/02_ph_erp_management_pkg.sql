@@ -849,17 +849,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
     ----------------------------------------------------------------------
     -- Result-returning create/update/delete/restore implementations
     ----------------------------------------------------------------------
-    PROCEDURE set_success(p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2, p_message IN VARCHAR2) IS
-    BEGIN
-        p_result_code := 'S';
-        p_result_message := p_message;
-    END set_success;
 
-    PROCEDURE set_validation_error(p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2, p_message IN VARCHAR2) IS
-    BEGIN
-        p_result_code := 'V';
-        p_result_message := p_message;
-    END set_validation_error;
 
     PROCEDURE set_error(p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_error_code      NUMBER := SQLCODE;
@@ -885,7 +875,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
     BEGIN
         ph_erp_management_validation_pkg.validate_create_platform(p_platform_name_en, p_platform_name_ar, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
 
@@ -893,7 +883,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
             VALUES (TRIM(p_platform_name_en), TRIM(p_platform_name_ar), 1, 1)
             RETURNING platform_id INTO p_platform_id;
 
-        set_success(p_result_code, p_result_message, ph_localization_pkg.localized_text('Platform created successfully.', 'ï؟½ï؟½ ï؟½ï؟½ï؟½ï؟½ï؟½ ï؟½ï؟½ï؟½ï؟½ï؟½ï؟½ ï؟½ï؟½ï؟½ï؟½ï؟½.'));
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, ph_localization_pkg.localized_text('Platform created successfully.', 'ï؟½ï؟½ ï؟½ï؟½ï؟½ï؟½ï؟½ ï؟½ï؟½ï؟½ï؟½ï؟½ï؟½ ï؟½ï؟½ï؟½ï؟½ï؟½.'));
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -943,7 +933,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
         ph_erp_management_validation_pkg.validate_restore_platform(p_platform_id, l_is_valid, l_validation_message);
         raise_when_invalid(l_is_valid, l_validation_message);
         do_restore_platform(p_platform_id);
-        set_success(p_result_code, p_result_message, 'Platform restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Platform restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -955,7 +945,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
     BEGIN
         ph_erp_management_validation_pkg.validate_create_pricing_unit(p_pricing_unit_name_en, p_pricing_unit_name_ar, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
 
@@ -963,7 +953,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
             VALUES (TRIM(p_pricing_unit_name_en), TRIM(p_pricing_unit_name_ar), 1, 1)
             RETURNING pricing_unit_id INTO p_pricing_unit_id;
 
-        set_success(p_result_code, p_result_message, ph_localization_pkg.localized_text('Pricing unit created successfully.', 'Pricing unit created successfully.'));
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, ph_localization_pkg.localized_text('Pricing unit created successfully.', 'Pricing unit created successfully.'));
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1013,7 +1003,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
         ph_erp_management_validation_pkg.validate_restore_pricing_unit(p_pricing_unit_id, l_is_valid, l_validation_message);
         raise_when_invalid(l_is_valid, l_validation_message);
         do_restore_pricing_unit(p_pricing_unit_id);
-        set_success(p_result_code, p_result_message, 'Pricing unit restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Pricing unit restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1025,7 +1015,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
     BEGIN
         ph_erp_management_validation_pkg.validate_create_payment_cycle(p_payment_cycle_name_en, p_payment_cycle_name_ar, p_months_count, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
 
@@ -1033,7 +1023,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
             VALUES (TRIM(p_payment_cycle_name_en), TRIM(p_payment_cycle_name_ar), p_months_count, 1, 1)
             RETURNING payment_cycle_id INTO p_payment_cycle_id;
 
-        set_success(p_result_code, p_result_message, ph_localization_pkg.localized_text('Payment cycle created successfully.', 'Payment cycle created successfully.'));
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, ph_localization_pkg.localized_text('Payment cycle created successfully.', 'Payment cycle created successfully.'));
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1083,7 +1073,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
         ph_erp_management_validation_pkg.validate_restore_payment_cycle(p_payment_cycle_id, l_is_valid, l_validation_message);
         raise_when_invalid(l_is_valid, l_validation_message);
         do_restore_payment_cycle(p_payment_cycle_id);
-        set_success(p_result_code, p_result_message, 'Payment cycle restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Payment cycle restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1095,7 +1085,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
     BEGIN
         ph_erp_management_validation_pkg.validate_create_product(p_product_name_en, p_product_name_ar, p_description_en, p_description_ar, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
 
@@ -1103,7 +1093,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
             VALUES (TRIM(p_product_name_en), TRIM(p_product_name_ar), p_description_en, p_description_ar, 1, p_created_by)
             RETURNING product_id INTO p_product_id;
 
-        set_success(p_result_code, p_result_message, ph_localization_pkg.localized_text('Product created successfully.', 'Product created successfully.'));
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, ph_localization_pkg.localized_text('Product created successfully.', 'Product created successfully.'));
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1153,7 +1143,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
         ph_erp_management_validation_pkg.validate_restore_product(p_product_id, p_updated_by, l_is_valid, l_validation_message);
         raise_when_invalid(l_is_valid, l_validation_message);
         do_restore_product(p_product_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Product restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Product restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1165,7 +1155,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
     BEGIN
         ph_erp_management_validation_pkg.validate_create_module(p_product_id, p_module_name_en, p_module_name_ar, p_description_en, p_description_ar, p_display_order, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
 
@@ -1191,7 +1181,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
         p_created_by
         ) RETURNING module_id INTO p_module_id;
 
-        set_success(p_result_code, p_result_message, ph_localization_pkg.localized_text('Module created successfully.', 'Module created successfully.'));
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, ph_localization_pkg.localized_text('Module created successfully.', 'Module created successfully.'));
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1242,7 +1232,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
         ph_erp_management_validation_pkg.validate_restore_module(p_product_id, p_module_id, p_updated_by, l_is_valid, l_validation_message);
         raise_when_invalid(l_is_valid, l_validation_message);
         do_restore_module(p_product_id, p_module_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Module restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Module restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1254,7 +1244,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
     BEGIN
         ph_erp_management_validation_pkg.validate_create_module_platform(p_product_id, p_module_id, p_platform_id, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
 
@@ -1279,7 +1269,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
         INSERT (product_id, module_id, platform_id, is_active, created_by)
             VALUES (source.product_id, source.module_id, source.platform_id, 1, p_created_by);
 
-        set_success(p_result_code, p_result_message, ph_localization_pkg.localized_text('Module platform created successfully.', 'Module platform created successfully.'));
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, ph_localization_pkg.localized_text('Module platform created successfully.', 'Module platform created successfully.'));
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1315,7 +1305,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
         ph_erp_management_validation_pkg.validate_restore_module_platform(p_product_id, p_module_id, p_platform_id, p_updated_by, l_is_valid, l_validation_message);
         raise_when_invalid(l_is_valid, l_validation_message);
         do_restore_module_platform(p_product_id, p_module_id, p_platform_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Module platform restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Module platform restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1327,7 +1317,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
     BEGIN
         ph_erp_management_validation_pkg.validate_create_feature(p_product_id, p_module_id, p_platform_id, p_feature_name_en, p_feature_name_ar, p_description_en, p_description_ar, p_price, p_pricing_unit_id, p_usage_unit, p_display_order, p_created_by, l_is_valid, l_validation_message);
         IF l_is_valid = 0 THEN
-            set_validation_error(p_result_code, p_result_message, l_validation_message);
+            ph_helpers_pkg.set_validation_error(p_result_code, p_result_message, l_validation_message);
             RETURN;
         END IF;
 
@@ -1363,7 +1353,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
         p_created_by
         ) RETURNING feature_id INTO p_feature_id;
 
-        set_success(p_result_code, p_result_message, ph_localization_pkg.localized_text('Feature created successfully.', 'Feature created successfully.'));
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, ph_localization_pkg.localized_text('Feature created successfully.', 'Feature created successfully.'));
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
@@ -1416,7 +1406,7 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
         ph_erp_management_validation_pkg.validate_restore_feature(p_product_id, p_module_id, p_platform_id, p_feature_id, p_updated_by, l_is_valid, l_validation_message);
         raise_when_invalid(l_is_valid, l_validation_message);
         do_restore_feature(p_product_id, p_module_id, p_platform_id, p_feature_id, p_updated_by);
-        set_success(p_result_code, p_result_message, 'Feature restored successfully.');
+        ph_helpers_pkg.set_success(p_result_code, p_result_message, 'Feature restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
