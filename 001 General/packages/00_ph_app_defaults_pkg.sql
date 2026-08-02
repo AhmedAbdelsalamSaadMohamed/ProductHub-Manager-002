@@ -7,10 +7,6 @@ Purpose:
 */
 
 CREATE OR REPLACE PACKAGE ph_app_defaults_pkg AS
-    FUNCTION normalize_default_key (
-        p_default_key IN VARCHAR2
-    ) RETURN VARCHAR2;
-
     FUNCTION get_default_code (
         p_default_key  IN VARCHAR2,
         p_default_code IN VARCHAR2 DEFAULT NULL
@@ -56,20 +52,6 @@ END ph_app_defaults_pkg;
 /
 
 CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
-    FUNCTION normalize_default_key (
-        p_default_key IN VARCHAR2
-    ) RETURN VARCHAR2 IS
-    BEGIN
-        RETURN UPPER(TRIM(p_default_key));
-    END normalize_default_key;
-
-    FUNCTION normalize_value_type (
-        p_value_type IN VARCHAR2
-    ) RETURN VARCHAR2 IS
-    BEGIN
-        RETURN UPPER(TRIM(COALESCE(p_value_type, 'STRING')));
-    END normalize_value_type;
-
     FUNCTION valid_flag (
         p_flag IN NUMBER
     ) RETURN NUMBER IS
@@ -82,7 +64,7 @@ CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
     ) RETURN NUMBER IS
     BEGIN
         RETURN CASE
-            WHEN normalize_value_type(p_value_type) IN ('STRING', 'NUMBER', 'BOOLEAN', 'JSON', 'CODE') THEN 1
+            WHEN UPPER(TRIM(COALESCE(p_value_type, 'STRING'))) IN ('STRING', 'NUMBER', 'BOOLEAN', 'JSON', 'CODE') THEN 1
             ELSE 0
         END;
     END valid_value_type;
@@ -125,7 +107,7 @@ CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
         SELECT default_code
           INTO l_default_code
           FROM ph_app_default_values
-         WHERE default_key = normalize_default_key(p_default_key)
+         WHERE default_key = UPPER(TRIM(p_default_key))
            AND is_active = 1
            AND is_deleted = 0;
 
@@ -146,7 +128,7 @@ CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
         SELECT default_value
           INTO l_default_value
           FROM ph_app_default_values
-         WHERE default_key = normalize_default_key(p_default_key)
+         WHERE default_key = UPPER(TRIM(p_default_key))
            AND is_active = 1
            AND is_deleted = 0;
 
@@ -166,7 +148,7 @@ CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
         SELECT value_type
           INTO l_value_type
           FROM ph_app_default_values
-         WHERE default_key = normalize_default_key(p_default_key)
+         WHERE default_key = UPPER(TRIM(p_default_key))
            AND is_active = 1
            AND is_deleted = 0;
 
@@ -191,8 +173,8 @@ CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
         p_result_code       OUT VARCHAR2,
         p_result_message    OUT VARCHAR2
     ) IS
-        l_default_key ph_app_default_values.default_key%TYPE := normalize_default_key(p_default_key);
-        l_value_type  ph_app_default_values.value_type%TYPE := normalize_value_type(p_value_type);
+        l_default_key ph_app_default_values.default_key%TYPE := UPPER(TRIM(p_default_key));
+        l_value_type  ph_app_default_values.value_type%TYPE := UPPER(TRIM(COALESCE(p_value_type, 'STRING')));
     BEGIN
         IF l_default_key IS NULL THEN
             set_validation_error(p_result_code, p_result_message, 'Default key is required.');
@@ -270,7 +252,7 @@ CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
         p_result_code    OUT VARCHAR2,
         p_result_message OUT VARCHAR2
     ) IS
-        l_default_key ph_app_default_values.default_key%TYPE := normalize_default_key(p_default_key);
+        l_default_key ph_app_default_values.default_key%TYPE := UPPER(TRIM(p_default_key));
     BEGIN
         IF l_default_key IS NULL THEN
             set_validation_error(p_result_code, p_result_message, 'Default key is required.');
@@ -300,7 +282,7 @@ CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
         p_result_code    OUT VARCHAR2,
         p_result_message OUT VARCHAR2
     ) IS
-        l_default_key ph_app_default_values.default_key%TYPE := normalize_default_key(p_default_key);
+        l_default_key ph_app_default_values.default_key%TYPE := UPPER(TRIM(p_default_key));
     BEGIN
         IF l_default_key IS NULL THEN
             set_validation_error(p_result_code, p_result_message, 'Default key is required.');
@@ -326,4 +308,3 @@ CREATE OR REPLACE PACKAGE BODY ph_app_defaults_pkg AS
     END restore_default_value;
 END ph_app_defaults_pkg;
 /
-

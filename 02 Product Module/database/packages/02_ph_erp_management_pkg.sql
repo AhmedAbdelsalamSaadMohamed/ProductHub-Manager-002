@@ -1,4 +1,4 @@
-﻿/*
+/*
 ProductHub Manager - ERP Management Package
 Target DBMS: Oracle Database 21c+
 
@@ -25,36 +25,43 @@ CREATE OR REPLACE PACKAGE ph_erp_management_pkg AS
     -- Create/update/delete/restore operations
     ----------------------------------------------------------------------
     PROCEDURE create_platform(p_platform_name_en IN VARCHAR2, p_platform_name_ar IN VARCHAR2, p_platform_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_platform(p_platform_name_en IN VARCHAR2, p_platform_name_ar IN VARCHAR2, p_platform_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_platform(p_platform_id IN NUMBER, p_platform_name_en IN VARCHAR2 DEFAULT NULL, p_platform_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_platform(p_platform_id IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_platform(p_platform_id IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_pricing_unit(p_pricing_unit_name_en IN VARCHAR2, p_pricing_unit_name_ar IN VARCHAR2, p_pricing_unit_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_pricing_unit(p_pricing_unit_name_en IN VARCHAR2, p_pricing_unit_name_ar IN VARCHAR2, p_pricing_unit_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_pricing_unit(p_pricing_unit_id IN NUMBER, p_pricing_unit_name_en IN VARCHAR2 DEFAULT NULL, p_pricing_unit_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_pricing_unit(p_pricing_unit_id IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_pricing_unit(p_pricing_unit_id IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_payment_cycle(p_payment_cycle_name_en IN VARCHAR2, p_payment_cycle_name_ar IN VARCHAR2, p_months_count IN NUMBER, p_payment_cycle_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_payment_cycle(p_payment_cycle_name_en IN VARCHAR2, p_payment_cycle_name_ar IN VARCHAR2, p_months_count IN NUMBER, p_payment_cycle_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_payment_cycle(p_payment_cycle_id IN NUMBER, p_payment_cycle_name_en IN VARCHAR2 DEFAULT NULL, p_payment_cycle_name_ar IN VARCHAR2 DEFAULT NULL, p_months_count IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_payment_cycle(p_payment_cycle_id IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_payment_cycle(p_payment_cycle_id IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_product(p_product_name_en IN VARCHAR2, p_product_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_product_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_product(p_product_name_en IN VARCHAR2, p_product_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_product_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_product(p_product_id IN NUMBER, p_product_name_en IN VARCHAR2 DEFAULT NULL, p_product_name_ar IN VARCHAR2 DEFAULT NULL, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_product(p_product_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_product(p_product_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_module(p_product_id IN NUMBER, p_module_name_en IN VARCHAR2, p_module_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_display_order IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_module_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_module(p_product_id IN NUMBER, p_module_name_en IN VARCHAR2, p_module_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_display_order IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_module_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_module(p_product_id IN NUMBER, p_module_id IN NUMBER, p_module_name_en IN VARCHAR2 DEFAULT NULL, p_module_name_ar IN VARCHAR2 DEFAULT NULL, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_display_order IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_module(p_product_id IN NUMBER, p_module_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_module(p_product_id IN NUMBER, p_module_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_module_platform(p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_module_platform(p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_module_platform(p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_module_platform(p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_module_platform(p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_feature(p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_name_en IN VARCHAR2, p_feature_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_price IN NUMBER, p_pricing_unit_id IN NUMBER, p_usage_unit IN VARCHAR2 DEFAULT 'USE', p_display_order IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_feature_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_feature(p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_name_en IN VARCHAR2, p_feature_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_price IN NUMBER, p_pricing_unit_id IN NUMBER, p_usage_unit IN VARCHAR2 DEFAULT 'USE', p_display_order IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_feature_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_feature(p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_feature_name_en IN VARCHAR2 DEFAULT NULL, p_feature_name_ar IN VARCHAR2 DEFAULT NULL, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_price IN NUMBER DEFAULT NULL, p_pricing_unit_id IN NUMBER DEFAULT NULL, p_usage_unit IN VARCHAR2 DEFAULT NULL, p_display_order IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_feature(p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_feature(p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
@@ -892,6 +899,25 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
             set_error(p_result_code, p_result_message);
     END create_platform;
 
+    PROCEDURE put_platform(p_platform_name_en IN VARCHAR2, p_platform_name_ar IN VARCHAR2, p_platform_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_platform_id NUMBER;
+    BEGIN
+        SELECT MIN(platform_id) INTO l_platform_id
+          FROM ph_erp_platform_lkp
+         WHERE platform_name_en = TRIM(p_platform_name_en)
+           AND platform_name_ar = TRIM(p_platform_name_ar);
+
+        IF l_platform_id IS NOT NULL THEN
+            p_platform_id := l_platform_id;
+            restore_platform(l_platform_id, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_platform(l_platform_id, p_platform_name_en, p_platform_name_ar, 1, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_platform(p_platform_name_en, p_platform_name_ar, p_platform_id, p_result_code, p_result_message);
+    END put_platform;
+
     PROCEDURE update_platform(p_platform_id IN NUMBER, p_platform_name_en IN VARCHAR2 DEFAULT NULL, p_platform_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
     BEGIN
         message_update_platform(p_platform_id, p_platform_name_en, p_platform_name_ar, p_is_active, p_result_message);
@@ -942,6 +968,25 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_pricing_unit;
+
+    PROCEDURE put_pricing_unit(p_pricing_unit_name_en IN VARCHAR2, p_pricing_unit_name_ar IN VARCHAR2, p_pricing_unit_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_pricing_unit_id NUMBER;
+    BEGIN
+        SELECT MIN(pricing_unit_id) INTO l_pricing_unit_id
+          FROM ph_erp_pricing_unit_lkp
+         WHERE pricing_unit_name_en = TRIM(p_pricing_unit_name_en)
+           AND pricing_unit_name_ar = TRIM(p_pricing_unit_name_ar);
+
+        IF l_pricing_unit_id IS NOT NULL THEN
+            p_pricing_unit_id := l_pricing_unit_id;
+            restore_pricing_unit(l_pricing_unit_id, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_pricing_unit(l_pricing_unit_id, p_pricing_unit_name_en, p_pricing_unit_name_ar, 1, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_pricing_unit(p_pricing_unit_name_en, p_pricing_unit_name_ar, p_pricing_unit_id, p_result_code, p_result_message);
+    END put_pricing_unit;
 
     PROCEDURE update_pricing_unit(p_pricing_unit_id IN NUMBER, p_pricing_unit_name_en IN VARCHAR2 DEFAULT NULL, p_pricing_unit_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
     BEGIN
@@ -994,6 +1039,25 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
             set_error(p_result_code, p_result_message);
     END create_payment_cycle;
 
+    PROCEDURE put_payment_cycle(p_payment_cycle_name_en IN VARCHAR2, p_payment_cycle_name_ar IN VARCHAR2, p_months_count IN NUMBER, p_payment_cycle_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_payment_cycle_id NUMBER;
+    BEGIN
+        SELECT MIN(payment_cycle_id) INTO l_payment_cycle_id
+          FROM ph_erp_payment_cycle_lkp
+         WHERE payment_cycle_name_en = TRIM(p_payment_cycle_name_en)
+           AND payment_cycle_name_ar = TRIM(p_payment_cycle_name_ar);
+
+        IF l_payment_cycle_id IS NOT NULL THEN
+            p_payment_cycle_id := l_payment_cycle_id;
+            restore_payment_cycle(l_payment_cycle_id, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_payment_cycle(l_payment_cycle_id, p_payment_cycle_name_en, p_payment_cycle_name_ar, p_months_count, 1, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_payment_cycle(p_payment_cycle_name_en, p_payment_cycle_name_ar, p_months_count, p_payment_cycle_id, p_result_code, p_result_message);
+    END put_payment_cycle;
+
     PROCEDURE update_payment_cycle(p_payment_cycle_id IN NUMBER, p_payment_cycle_name_en IN VARCHAR2 DEFAULT NULL, p_payment_cycle_name_ar IN VARCHAR2 DEFAULT NULL, p_months_count IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
     BEGIN
         message_update_payment_cycle(p_payment_cycle_id, p_payment_cycle_name_en, p_payment_cycle_name_ar, p_months_count, p_is_active, p_result_message);
@@ -1044,6 +1108,25 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_product;
+
+    PROCEDURE put_product(p_product_name_en IN VARCHAR2, p_product_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_product_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_product_id NUMBER;
+    BEGIN
+        SELECT MIN(product_id) INTO l_product_id
+          FROM ph_erp_products
+         WHERE product_name_en = TRIM(p_product_name_en)
+           AND product_name_ar = TRIM(p_product_name_ar);
+
+        IF l_product_id IS NOT NULL THEN
+            p_product_id := l_product_id;
+            restore_product(l_product_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_product(l_product_id, p_product_name_en, p_product_name_ar, p_description_en, p_description_ar, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_product(p_product_name_en, p_product_name_ar, p_description_en, p_description_ar, p_created_by, p_product_id, p_result_code, p_result_message);
+    END put_product;
 
     PROCEDURE update_product(p_product_id IN NUMBER, p_product_name_en IN VARCHAR2 DEFAULT NULL, p_product_name_ar IN VARCHAR2 DEFAULT NULL, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
     BEGIN
@@ -1114,6 +1197,26 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
             set_error(p_result_code, p_result_message);
     END create_module;
 
+    PROCEDURE put_module(p_product_id IN NUMBER, p_module_name_en IN VARCHAR2, p_module_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_display_order IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_module_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_module_id NUMBER;
+    BEGIN
+        SELECT MIN(module_id) INTO l_module_id
+          FROM ph_erp_modules
+         WHERE product_id = p_product_id
+           AND module_name_en = TRIM(p_module_name_en)
+           AND module_name_ar = TRIM(p_module_name_ar);
+
+        IF l_module_id IS NOT NULL THEN
+            p_module_id := l_module_id;
+            restore_module(p_product_id, l_module_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_module(p_product_id, l_module_id, p_module_name_en, p_module_name_ar, p_description_en, p_description_ar, p_display_order, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_module(p_product_id, p_module_name_en, p_module_name_ar, p_description_en, p_description_ar, p_display_order, p_created_by, p_module_id, p_result_code, p_result_message);
+    END put_module;
+
     PROCEDURE update_module(p_product_id IN NUMBER, p_module_id IN NUMBER, p_module_name_en IN VARCHAR2 DEFAULT NULL, p_module_name_ar IN VARCHAR2 DEFAULT NULL, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_display_order IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
     BEGIN
         message_update_module(p_product_id, p_module_id, p_module_name_en, p_module_name_ar, p_description_en, p_description_ar, p_display_order, p_is_active, p_updated_by, p_result_message);
@@ -1181,6 +1284,11 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_module_platform;
+
+    PROCEDURE put_module_platform(p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+    BEGIN
+        create_module_platform(p_product_id, p_module_id, p_platform_id, p_created_by, p_result_code, p_result_message);
+    END put_module_platform;
 
     PROCEDURE update_module_platform(p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
     BEGIN
@@ -1261,6 +1369,28 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
             set_error(p_result_code, p_result_message);
     END create_feature;
 
+    PROCEDURE put_feature(p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_name_en IN VARCHAR2, p_feature_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_price IN NUMBER, p_pricing_unit_id IN NUMBER, p_usage_unit IN VARCHAR2 DEFAULT 'USE', p_display_order IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_feature_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_feature_id NUMBER;
+    BEGIN
+        SELECT MIN(feature_id) INTO l_feature_id
+          FROM ph_erp_features
+         WHERE product_id = p_product_id
+           AND module_id = p_module_id
+           AND platform_id = p_platform_id
+           AND feature_name_en = TRIM(p_feature_name_en)
+           AND feature_name_ar = TRIM(p_feature_name_ar);
+
+        IF l_feature_id IS NOT NULL THEN
+            p_feature_id := l_feature_id;
+            restore_feature(p_product_id, p_module_id, p_platform_id, l_feature_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_feature(p_product_id, p_module_id, p_platform_id, l_feature_id, p_feature_name_en, p_feature_name_ar, p_description_en, p_description_ar, p_price, p_pricing_unit_id, p_usage_unit, p_display_order, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_feature(p_product_id, p_module_id, p_platform_id, p_feature_name_en, p_feature_name_ar, p_description_en, p_description_ar, p_price, p_pricing_unit_id, p_usage_unit, p_display_order, p_created_by, p_feature_id, p_result_code, p_result_message);
+    END put_feature;
+
     PROCEDURE update_feature(p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_feature_name_en IN VARCHAR2 DEFAULT NULL, p_feature_name_ar IN VARCHAR2 DEFAULT NULL, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_price IN NUMBER DEFAULT NULL, p_pricing_unit_id IN NUMBER DEFAULT NULL, p_usage_unit IN VARCHAR2 DEFAULT NULL, p_display_order IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
     BEGIN
         message_update_feature(p_product_id, p_module_id, p_platform_id, p_feature_id, p_feature_name_en, p_feature_name_ar, p_description_en, p_description_ar, p_price, p_pricing_unit_id, p_usage_unit, p_display_order, p_is_active, p_updated_by, p_result_message);
@@ -1293,4 +1423,3 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_management_pkg AS
     END restore_feature;
 END ph_erp_management_pkg;
 /
-

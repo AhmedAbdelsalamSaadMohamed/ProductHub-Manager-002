@@ -14,42 +14,50 @@ CREATE OR REPLACE PACKAGE ph_sec_management_pkg AS
     -- Security Entity Management
     ----------------------------------------------------------------------
     PROCEDURE create_user_type(p_user_type_name_en IN VARCHAR2, p_user_type_name_ar IN VARCHAR2, p_user_type_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_user_type(p_user_type_name_en IN VARCHAR2, p_user_type_name_ar IN VARCHAR2, p_user_type_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_user_type(p_user_type_id IN NUMBER, p_user_type_name_en IN VARCHAR2 DEFAULT NULL, p_user_type_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_user_type(p_user_type_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_user_type(p_user_type_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_object_type(p_object_type_name_en IN VARCHAR2, p_object_type_name_ar IN VARCHAR2, p_object_type_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_object_type(p_object_type_name_en IN VARCHAR2, p_object_type_name_ar IN VARCHAR2, p_object_type_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_object_type(p_object_type_id IN NUMBER, p_object_type_name_en IN VARCHAR2 DEFAULT NULL, p_object_type_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_object_type(p_object_type_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_object_type(p_object_type_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_object(p_parent_object_id IN NUMBER DEFAULT NULL, p_object_name IN VARCHAR2, p_object_type_id IN NUMBER, p_object_path IN VARCHAR2, p_display_name_en IN VARCHAR2, p_display_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_object_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_object(p_parent_object_id IN NUMBER DEFAULT NULL, p_object_name IN VARCHAR2, p_object_type_id IN NUMBER, p_object_path IN VARCHAR2, p_display_name_en IN VARCHAR2, p_display_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_object_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_object(p_object_id IN NUMBER, p_parent_object_id IN NUMBER DEFAULT NULL, p_object_name IN VARCHAR2 DEFAULT NULL, p_object_type_id IN NUMBER DEFAULT NULL, p_object_path IN VARCHAR2 DEFAULT NULL, p_display_name_en IN VARCHAR2 DEFAULT NULL, p_display_name_ar IN VARCHAR2 DEFAULT NULL, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_object(p_object_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_object(p_object_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_action(p_action_name IN VARCHAR2, p_display_name_en IN VARCHAR2, p_display_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_action_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_action(p_action_name IN VARCHAR2, p_display_name_en IN VARCHAR2, p_display_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_action_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_action(p_action_id IN NUMBER, p_action_name IN VARCHAR2 DEFAULT NULL, p_display_name_en IN VARCHAR2 DEFAULT NULL, p_display_name_ar IN VARCHAR2 DEFAULT NULL, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_action(p_action_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_action(p_action_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_permission(p_object_id IN NUMBER, p_action_id IN NUMBER, p_permission_name_en IN VARCHAR2, p_permission_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_permission_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_permission(p_object_id IN NUMBER, p_action_id IN NUMBER, p_permission_name_en IN VARCHAR2, p_permission_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_permission_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_permission(p_permission_id IN NUMBER, p_object_id IN NUMBER DEFAULT NULL, p_action_id IN NUMBER DEFAULT NULL, p_permission_name_en IN VARCHAR2 DEFAULT NULL, p_permission_name_ar IN VARCHAR2 DEFAULT NULL, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_permission(p_permission_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_permission(p_permission_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_user(p_email IN VARCHAR2, p_display_name IN VARCHAR2, p_user_type IN NUMBER, p_customer_id IN NUMBER DEFAULT NULL, p_password IN VARCHAR2 DEFAULT NULL, p_must_change_password IN NUMBER DEFAULT 1, p_is_initial_admin IN NUMBER DEFAULT 0, p_user_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_user(p_email IN VARCHAR2, p_display_name IN VARCHAR2, p_user_type IN NUMBER, p_customer_id IN NUMBER DEFAULT NULL, p_password IN VARCHAR2 DEFAULT NULL, p_must_change_password IN NUMBER DEFAULT 1, p_is_initial_admin IN NUMBER DEFAULT 0, p_user_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_user(p_user_id IN NUMBER, p_email IN VARCHAR2 DEFAULT NULL, p_display_name IN VARCHAR2 DEFAULT NULL, p_user_type IN NUMBER DEFAULT NULL, p_customer_id IN NUMBER DEFAULT NULL, p_must_change_password IN NUMBER DEFAULT NULL, p_is_initial_admin IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_user(p_user_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_user(p_user_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_preference_value IN VARCHAR2, p_value_type IN VARCHAR2 DEFAULT 'STRING', p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_preference_value IN VARCHAR2, p_value_type IN VARCHAR2 DEFAULT 'STRING', p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     FUNCTION get_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_default_value IN VARCHAR2 DEFAULT NULL) RETURN VARCHAR2;
     PROCEDURE update_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_preference_value IN VARCHAR2 DEFAULT NULL, p_value_type IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_role(p_role_name_en IN VARCHAR2, p_role_name_ar IN VARCHAR2, p_user_type IN NUMBER, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_is_system_role IN NUMBER DEFAULT 0, p_role_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_role(p_role_name_en IN VARCHAR2, p_role_name_ar IN VARCHAR2, p_user_type IN NUMBER, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_is_system_role IN NUMBER DEFAULT 0, p_role_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_role(p_role_id IN NUMBER, p_role_name_en IN VARCHAR2 DEFAULT NULL, p_role_name_ar IN VARCHAR2 DEFAULT NULL, p_user_type IN NUMBER DEFAULT NULL, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_is_system_role IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_role(p_role_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_role(p_role_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
@@ -63,16 +71,19 @@ CREATE OR REPLACE PACKAGE ph_sec_management_pkg AS
     PROCEDURE restore_user_role(p_user_id IN NUMBER, p_role_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_apex_page_type(p_page_type_code IN VARCHAR2, p_page_type_name_en IN VARCHAR2, p_page_type_name_ar IN VARCHAR2, p_page_type_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_apex_page_type(p_page_type_code IN VARCHAR2, p_page_type_name_en IN VARCHAR2, p_page_type_name_ar IN VARCHAR2, p_page_type_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_apex_page_type(p_page_type_id IN NUMBER, p_page_type_code IN VARCHAR2 DEFAULT NULL, p_page_type_name_en IN VARCHAR2 DEFAULT NULL, p_page_type_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_apex_page_type(p_page_type_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_apex_page_type(p_page_type_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_apex_page(p_apex_app_id IN NUMBER, p_apex_page_no IN NUMBER, p_apex_page_type_id IN NUMBER, p_page_name_en IN VARCHAR2, p_page_name_ar IN VARCHAR2, p_apex_page_id OUT NUMBER, p_page_alias IN VARCHAR2 DEFAULT NULL, p_object_path IN VARCHAR2 DEFAULT NULL, p_access_mode IN VARCHAR2 DEFAULT 'ANY', p_is_public IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_apex_page(p_apex_app_id IN NUMBER, p_apex_page_no IN NUMBER, p_apex_page_type_id IN NUMBER, p_page_name_en IN VARCHAR2, p_page_name_ar IN VARCHAR2, p_apex_page_id OUT NUMBER, p_page_alias IN VARCHAR2 DEFAULT NULL, p_object_path IN VARCHAR2 DEFAULT NULL, p_access_mode IN VARCHAR2 DEFAULT 'ANY', p_is_public IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_apex_page(p_apex_page_id IN NUMBER, p_apex_app_id IN NUMBER DEFAULT NULL, p_apex_page_no IN NUMBER DEFAULT NULL, p_apex_page_type_id IN NUMBER DEFAULT NULL, p_page_name_en IN VARCHAR2 DEFAULT NULL, p_page_name_ar IN VARCHAR2 DEFAULT NULL, p_page_alias IN VARCHAR2 DEFAULT NULL, p_object_path IN VARCHAR2 DEFAULT NULL, p_access_mode IN VARCHAR2 DEFAULT NULL, p_is_public IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_apex_page(p_apex_page_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_apex_page(p_apex_page_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_apex_page_permission(p_apex_page_id IN NUMBER, p_permission_id IN NUMBER, p_is_an_access_permission IN NUMBER DEFAULT 1, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_apex_page_permission(p_apex_page_id IN NUMBER, p_permission_id IN NUMBER, p_is_an_access_permission IN NUMBER DEFAULT 1, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_apex_page_permission(p_apex_page_id IN NUMBER, p_permission_id IN NUMBER, p_is_an_access_permission IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_apex_page_permission(p_apex_page_id IN NUMBER, p_permission_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_apex_page_permission(p_apex_page_id IN NUMBER, p_permission_id IN NUMBER, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
@@ -80,15 +91,7 @@ END ph_sec_management_pkg;
 /
 
 CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
-    FUNCTION normalize_username(p_username IN VARCHAR2) RETURN VARCHAR2 IS
-    BEGIN
-        RETURN LOWER(TRIM(p_username));
-    END normalize_username;
 
-    FUNCTION normalize_preference_code(p_preference_code IN VARCHAR2) RETURN VARCHAR2 IS
-    BEGIN
-        RETURN UPPER(TRIM(p_preference_code));
-    END normalize_preference_code;
 
     PROCEDURE do_update_apex_page_type (
         p_page_type_id      IN NUMBER,
@@ -319,6 +322,25 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
             set_error(p_result_code, p_result_message);
     END create_user_type;
 
+    PROCEDURE put_user_type(p_user_type_name_en IN VARCHAR2, p_user_type_name_ar IN VARCHAR2, p_user_type_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_user_type_id NUMBER;
+    BEGIN
+        SELECT MIN(user_type_id) INTO l_user_type_id
+          FROM ph_sec_user_type_lkp
+         WHERE user_type_name_en = p_user_type_name_en
+           AND user_type_name_ar = p_user_type_name_ar;
+
+        IF l_user_type_id IS NOT NULL THEN
+            p_user_type_id := l_user_type_id;
+            restore_user_type(l_user_type_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_user_type(l_user_type_id, p_user_type_name_en, p_user_type_name_ar, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_user_type(p_user_type_name_en, p_user_type_name_ar, p_user_type_id, p_created_by, p_result_code, p_result_message);
+    END put_user_type;
+
     PROCEDURE update_user_type(p_user_type_id IN NUMBER, p_user_type_name_en IN VARCHAR2 DEFAULT NULL, p_user_type_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
         l_validation_message VARCHAR2(4000);
@@ -391,6 +413,25 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
             set_error(p_result_code, p_result_message);
     END create_object_type;
 
+    PROCEDURE put_object_type(p_object_type_name_en IN VARCHAR2, p_object_type_name_ar IN VARCHAR2, p_object_type_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_object_type_id NUMBER;
+    BEGIN
+        SELECT MIN(object_type_id) INTO l_object_type_id
+          FROM ph_sec_object_type_lkp
+         WHERE object_type_name_en = p_object_type_name_en
+           AND object_type_name_ar = p_object_type_name_ar;
+
+        IF l_object_type_id IS NOT NULL THEN
+            p_object_type_id := l_object_type_id;
+            restore_object_type(l_object_type_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_object_type(l_object_type_id, p_object_type_name_en, p_object_type_name_ar, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_object_type(p_object_type_name_en, p_object_type_name_ar, p_object_type_id, p_created_by, p_result_code, p_result_message);
+    END put_object_type;
+
     PROCEDURE update_object_type(p_object_type_id IN NUMBER, p_object_type_name_en IN VARCHAR2 DEFAULT NULL, p_object_type_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
         l_validation_message VARCHAR2(4000);
@@ -462,6 +503,25 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_object;
+
+    PROCEDURE put_object(p_parent_object_id IN NUMBER DEFAULT NULL, p_object_name IN VARCHAR2, p_object_type_id IN NUMBER, p_object_path IN VARCHAR2, p_display_name_en IN VARCHAR2, p_display_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_object_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_object_id NUMBER;
+    BEGIN
+        SELECT MIN(object_id) INTO l_object_id
+          FROM ph_sec_objects
+         WHERE object_name = UPPER(TRIM(p_object_name))
+            OR object_path = TRIM(p_object_path);
+
+        IF l_object_id IS NOT NULL THEN
+            p_object_id := l_object_id;
+            restore_object(l_object_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_object(l_object_id, p_parent_object_id, p_object_name, p_object_type_id, p_object_path, p_display_name_en, p_display_name_ar, p_description_en, p_description_ar, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_object(p_parent_object_id, p_object_name, p_object_type_id, p_object_path, p_display_name_en, p_display_name_ar, p_description_en, p_description_ar, p_object_id, p_created_by, p_result_code, p_result_message);
+    END put_object;
 
     PROCEDURE update_object(p_object_id IN NUMBER, p_parent_object_id IN NUMBER DEFAULT NULL, p_object_name IN VARCHAR2 DEFAULT NULL, p_object_type_id IN NUMBER DEFAULT NULL, p_object_path IN VARCHAR2 DEFAULT NULL, p_display_name_en IN VARCHAR2 DEFAULT NULL, p_display_name_ar IN VARCHAR2 DEFAULT NULL, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
@@ -542,6 +602,24 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
             set_error(p_result_code, p_result_message);
     END create_action;
 
+    PROCEDURE put_action(p_action_name IN VARCHAR2, p_display_name_en IN VARCHAR2, p_display_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_action_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_action_id NUMBER;
+    BEGIN
+        SELECT MIN(action_id) INTO l_action_id
+          FROM ph_sec_actions
+         WHERE action_name = UPPER(TRIM(p_action_name));
+
+        IF l_action_id IS NOT NULL THEN
+            p_action_id := l_action_id;
+            restore_action(l_action_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_action(l_action_id, p_action_name, p_display_name_en, p_display_name_ar, p_description_en, p_description_ar, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_action(p_action_name, p_display_name_en, p_display_name_ar, p_description_en, p_description_ar, p_action_id, p_created_by, p_result_code, p_result_message);
+    END put_action;
+
     PROCEDURE update_action(p_action_id IN NUMBER, p_action_name IN VARCHAR2 DEFAULT NULL, p_display_name_en IN VARCHAR2 DEFAULT NULL, p_display_name_ar IN VARCHAR2 DEFAULT NULL, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
         l_validation_message VARCHAR2(4000);
@@ -617,6 +695,25 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_permission;
+
+    PROCEDURE put_permission(p_object_id IN NUMBER, p_action_id IN NUMBER, p_permission_name_en IN VARCHAR2, p_permission_name_ar IN VARCHAR2, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_permission_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_permission_id NUMBER;
+    BEGIN
+        SELECT MIN(permission_id) INTO l_permission_id
+          FROM ph_sec_permissions
+         WHERE object_id = p_object_id
+           AND action_id = p_action_id;
+
+        IF l_permission_id IS NOT NULL THEN
+            p_permission_id := l_permission_id;
+            restore_permission(l_permission_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_permission(l_permission_id, p_object_id, p_action_id, p_permission_name_en, p_permission_name_ar, p_description_en, p_description_ar, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_permission(p_object_id, p_action_id, p_permission_name_en, p_permission_name_ar, p_description_en, p_description_ar, p_permission_id, p_created_by, p_result_code, p_result_message);
+    END put_permission;
 
     PROCEDURE update_permission(p_permission_id IN NUMBER, p_object_id IN NUMBER DEFAULT NULL, p_action_id IN NUMBER DEFAULT NULL, p_permission_name_en IN VARCHAR2 DEFAULT NULL, p_permission_name_ar IN VARCHAR2 DEFAULT NULL, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
@@ -699,7 +796,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
         END IF;
 
         INSERT INTO ph_sec_users (customer_id, user_type, email, display_name, must_change_password, is_initial_admin, is_active, created_by)
-            VALUES (p_customer_id, p_user_type, normalize_username(p_email), TRIM(p_display_name), p_must_change_password, p_is_initial_admin, 1, NVL(p_created_by, 1))
+            VALUES (p_customer_id, p_user_type, LOWER(TRIM(p_email)), TRIM(p_display_name), p_must_change_password, p_is_initial_admin, 1, NVL(p_created_by, 1))
             RETURNING user_id INTO p_user_id;
         IF p_password IS NOT NULL THEN
             ph_sec_authentication_pkg.set_password(p_user_id, p_password, p_created_by);
@@ -709,6 +806,27 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_user;
+
+    PROCEDURE put_user(p_email IN VARCHAR2, p_display_name IN VARCHAR2, p_user_type IN NUMBER, p_customer_id IN NUMBER DEFAULT NULL, p_password IN VARCHAR2 DEFAULT NULL, p_must_change_password IN NUMBER DEFAULT 1, p_is_initial_admin IN NUMBER DEFAULT 0, p_user_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_user_id NUMBER;
+    BEGIN
+        SELECT MIN(user_id) INTO l_user_id
+          FROM ph_sec_users
+         WHERE email = LOWER(TRIM(p_email));
+
+        IF l_user_id IS NOT NULL THEN
+            p_user_id := l_user_id;
+            restore_user(l_user_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_user(l_user_id, p_email, p_display_name, p_user_type, p_customer_id, p_must_change_password, p_is_initial_admin, 1, p_created_by, p_result_code, p_result_message);
+            IF p_result_code = 'S' AND p_password IS NOT NULL THEN
+                ph_sec_authentication_pkg.set_password(l_user_id, p_password, p_created_by);
+            END IF;
+            RETURN;
+        END IF;
+
+        create_user(p_email, p_display_name, p_user_type, p_customer_id, p_password, p_must_change_password, p_is_initial_admin, p_user_id, p_created_by, p_result_code, p_result_message);
+    END put_user;
 
     PROCEDURE update_user(p_user_id IN NUMBER, p_email IN VARCHAR2 DEFAULT NULL, p_display_name IN VARCHAR2 DEFAULT NULL, p_user_type IN NUMBER DEFAULT NULL, p_customer_id IN NUMBER DEFAULT NULL, p_must_change_password IN NUMBER DEFAULT NULL, p_is_initial_admin IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
@@ -722,7 +840,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
         UPDATE ph_sec_users
             SET customer_id = COALESCE(p_customer_id, customer_id),
                 user_type = COALESCE(p_user_type, user_type),
-                email = COALESCE(normalize_username(p_email), email),
+                email = COALESCE(LOWER(TRIM(p_email)), email),
                 display_name = COALESCE(TRIM(p_display_name), display_name),
                 must_change_password = COALESCE(p_must_change_password, must_change_password),
                 is_initial_admin = COALESCE(p_is_initial_admin, is_initial_admin),
@@ -773,7 +891,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     PROCEDURE create_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_preference_value IN VARCHAR2, p_value_type IN VARCHAR2 DEFAULT 'STRING', p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
         l_validation_message VARCHAR2(4000);
-        l_preference_code ph_sec_user_preferences.preference_code%TYPE := normalize_preference_code(p_preference_code);
+        l_preference_code ph_sec_user_preferences.preference_code%TYPE := UPPER(TRIM(p_preference_code));
         l_value_type ph_sec_user_preferences.value_type%TYPE := UPPER(TRIM(COALESCE(p_value_type, 'STRING')));
     BEGIN
         ph_sec_management_validation_pkg.validate_create_user_preference(p_user_id, p_preference_code, p_preference_value, p_value_type, p_created_by, l_is_valid, l_validation_message);
@@ -790,8 +908,26 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
             set_error(p_result_code, p_result_message);
     END create_user_preference;
 
+    PROCEDURE put_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_preference_value IN VARCHAR2, p_value_type IN VARCHAR2 DEFAULT 'STRING', p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_preference_id NUMBER;
+    BEGIN
+        SELECT MIN(user_preference_id) INTO l_preference_id
+          FROM ph_sec_user_preferences
+         WHERE user_id = p_user_id
+           AND preference_code = UPPER(TRIM(p_preference_code));
+
+        IF l_preference_id IS NOT NULL THEN
+            restore_user_preference(p_user_id, p_preference_code, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_user_preference(p_user_id, p_preference_code, p_preference_value, p_value_type, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_user_preference(p_user_id, p_preference_code, p_preference_value, p_value_type, p_created_by, p_result_code, p_result_message);
+    END put_user_preference;
+
     FUNCTION get_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_default_value IN VARCHAR2 DEFAULT NULL) RETURN VARCHAR2 IS
-        l_preference_code ph_sec_user_preferences.preference_code%TYPE := normalize_preference_code(p_preference_code);
+        l_preference_code ph_sec_user_preferences.preference_code%TYPE := UPPER(TRIM(p_preference_code));
         l_value           ph_sec_user_preferences.preference_value%TYPE;
     BEGIN
         IF p_user_id IS NULL OR l_preference_code IS NULL THEN
@@ -807,7 +943,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
            AND is_deleted = 0;
 
         IF l_preference_code = 'LANGUAGE' THEN
-            RETURN ph_localization_pkg.normalize_language(COALESCE(l_value, p_default_value));
+            RETURN ph_localization_pkg.normalize_code(COALESCE(l_value, p_default_value));
         END IF;
 
         RETURN COALESCE(l_value, p_default_value);
@@ -821,7 +957,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     PROCEDURE update_user_preference(p_user_id IN NUMBER, p_preference_code IN VARCHAR2, p_preference_value IN VARCHAR2 DEFAULT NULL, p_value_type IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
         l_validation_message VARCHAR2(4000);
-        l_preference_code ph_sec_user_preferences.preference_code%TYPE := normalize_preference_code(p_preference_code);
+        l_preference_code ph_sec_user_preferences.preference_code%TYPE := UPPER(TRIM(p_preference_code));
         l_value_type ph_sec_user_preferences.value_type%TYPE := UPPER(TRIM(p_value_type));
     BEGIN
         ph_sec_management_validation_pkg.validate_update_user_preference(p_user_id, p_preference_code, p_preference_value, p_value_type, p_is_active, p_updated_by, l_is_valid, l_validation_message);
@@ -857,7 +993,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
             SET is_deleted = 1,
                 updated_by = p_updated_by
             WHERE user_id = p_user_id
-                AND preference_code = normalize_preference_code(p_preference_code)
+                AND preference_code = UPPER(TRIM(p_preference_code))
                 AND is_deleted = 0;
         set_success(p_result_code, p_result_message, 'User preference deleted successfully.');
     EXCEPTION
@@ -881,7 +1017,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
                 updated_by = p_updated_by,
                 updated_at = SYSTIMESTAMP
             WHERE user_id = p_user_id
-                AND preference_code = normalize_preference_code(p_preference_code);
+                AND preference_code = UPPER(TRIM(p_preference_code));
         set_success(p_result_code, p_result_message, 'User preference restored successfully.');
     EXCEPTION
         WHEN OTHERS THEN
@@ -905,6 +1041,26 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_role;
+
+    PROCEDURE put_role(p_role_name_en IN VARCHAR2, p_role_name_ar IN VARCHAR2, p_user_type IN NUMBER, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_is_system_role IN NUMBER DEFAULT 0, p_role_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_role_id NUMBER;
+    BEGIN
+        SELECT MIN(role_id) INTO l_role_id
+          FROM ph_sec_roles
+         WHERE role_name_en = p_role_name_en
+           AND role_name_ar = p_role_name_ar
+           AND user_type = p_user_type;
+
+        IF l_role_id IS NOT NULL THEN
+            p_role_id := l_role_id;
+            restore_role(l_role_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_role(l_role_id, p_role_name_en, p_role_name_ar, p_user_type, p_description_en, p_description_ar, p_is_system_role, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_role(p_role_name_en, p_role_name_ar, p_user_type, p_description_en, p_description_ar, p_is_system_role, p_role_id, p_created_by, p_result_code, p_result_message);
+    END put_role;
 
     PROCEDURE update_role(p_role_id IN NUMBER, p_role_name_en IN VARCHAR2 DEFAULT NULL, p_role_name_ar IN VARCHAR2 DEFAULT NULL, p_user_type IN NUMBER DEFAULT NULL, p_description_en IN VARCHAR2 DEFAULT NULL, p_description_ar IN VARCHAR2 DEFAULT NULL, p_is_system_role IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
@@ -1103,6 +1259,24 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
             set_error(p_result_code, p_result_message);
     END create_apex_page_type;
 
+    PROCEDURE put_apex_page_type(p_page_type_code IN VARCHAR2, p_page_type_name_en IN VARCHAR2, p_page_type_name_ar IN VARCHAR2, p_page_type_id OUT NUMBER, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_page_type_id NUMBER;
+    BEGIN
+        SELECT MIN(apex_page_type_id) INTO l_page_type_id
+          FROM ph_sec_apex_page_type_lkp
+         WHERE apex_page_type_code = UPPER(TRIM(p_page_type_code));
+
+        IF l_page_type_id IS NOT NULL THEN
+            p_page_type_id := l_page_type_id;
+            restore_apex_page_type(l_page_type_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_apex_page_type(l_page_type_id, p_page_type_code, p_page_type_name_en, p_page_type_name_ar, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_apex_page_type(p_page_type_code, p_page_type_name_en, p_page_type_name_ar, p_page_type_id, p_created_by, p_result_code, p_result_message);
+    END put_apex_page_type;
+
     PROCEDURE update_apex_page_type(p_page_type_id IN NUMBER, p_page_type_code IN VARCHAR2 DEFAULT NULL, p_page_type_name_en IN VARCHAR2 DEFAULT NULL, p_page_type_name_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
         l_validation_message VARCHAR2(4000);
@@ -1193,6 +1367,25 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
             set_error(p_result_code, p_result_message);
     END create_apex_page;
 
+    PROCEDURE put_apex_page(p_apex_app_id IN NUMBER, p_apex_page_no IN NUMBER, p_apex_page_type_id IN NUMBER, p_page_name_en IN VARCHAR2, p_page_name_ar IN VARCHAR2, p_apex_page_id OUT NUMBER, p_page_alias IN VARCHAR2 DEFAULT NULL, p_object_path IN VARCHAR2 DEFAULT NULL, p_access_mode IN VARCHAR2 DEFAULT 'ANY', p_is_public IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_apex_page_id NUMBER;
+    BEGIN
+        SELECT MIN(apex_page_id) INTO l_apex_page_id
+          FROM ph_sec_apex_pages
+         WHERE apex_app_id = p_apex_app_id
+           AND (apex_page_no = p_apex_page_no OR (p_page_alias IS NOT NULL AND page_alias = UPPER(TRIM(p_page_alias))));
+
+        IF l_apex_page_id IS NOT NULL THEN
+            p_apex_page_id := l_apex_page_id;
+            restore_apex_page(l_apex_page_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_apex_page(l_apex_page_id, p_apex_app_id, p_apex_page_no, p_apex_page_type_id, p_page_name_en, p_page_name_ar, p_page_alias, p_object_path, p_access_mode, p_is_public, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_apex_page(p_apex_app_id, p_apex_page_no, p_apex_page_type_id, p_page_name_en, p_page_name_ar, p_apex_page_id, p_page_alias, p_object_path, p_access_mode, p_is_public, p_created_by, p_result_code, p_result_message);
+    END put_apex_page;
+
     PROCEDURE update_apex_page(p_apex_page_id IN NUMBER, p_apex_app_id IN NUMBER DEFAULT NULL, p_apex_page_no IN NUMBER DEFAULT NULL, p_apex_page_type_id IN NUMBER DEFAULT NULL, p_page_name_en IN VARCHAR2 DEFAULT NULL, p_page_name_ar IN VARCHAR2 DEFAULT NULL, p_page_alias IN VARCHAR2 DEFAULT NULL, p_object_path IN VARCHAR2 DEFAULT NULL, p_access_mode IN VARCHAR2 DEFAULT NULL, p_is_public IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
         l_validation_message VARCHAR2(4000);
@@ -1274,6 +1467,11 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
             set_error(p_result_code, p_result_message);
     END create_apex_page_permission;
 
+    PROCEDURE put_apex_page_permission(p_apex_page_id IN NUMBER, p_permission_id IN NUMBER, p_is_an_access_permission IN NUMBER DEFAULT 1, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+    BEGIN
+        create_apex_page_permission(p_apex_page_id, p_permission_id, p_is_an_access_permission, p_created_by, p_result_code, p_result_message);
+    END put_apex_page_permission;
+
     PROCEDURE update_apex_page_permission(p_apex_page_id IN NUMBER, p_permission_id IN NUMBER, p_is_an_access_permission IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
         l_is_valid NUMBER;
         l_validation_message VARCHAR2(4000);
@@ -1323,4 +1521,3 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_management_pkg AS
     END restore_apex_page_permission;
 END ph_sec_management_pkg;
 /
-

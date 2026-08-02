@@ -43,10 +43,6 @@ END ph_sec_authorization_pkg;
 /
 
 CREATE OR REPLACE PACKAGE BODY ph_sec_authorization_pkg AS
-    FUNCTION normalize_username(p_username IN t_username) RETURN VARCHAR2 IS
-    BEGIN
-        RETURN LOWER(TRIM(p_username));
-    END normalize_username;
 
     FUNCTION yes_no(p_count IN NUMBER) RETURN NUMBER IS
     BEGIN
@@ -85,7 +81,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authorization_pkg AS
         p_role_code IN VARCHAR2
     ) RETURN BOOLEAN IS
         l_count     NUMBER(10);
-        l_username  ph_sec_users.email%TYPE := normalize_username(p_username);
+        l_username  ph_sec_users.email%TYPE := LOWER(TRIM(p_username));
     BEGIN
         SELECT COUNT(*)
           INTO l_count
@@ -113,7 +109,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authorization_pkg AS
         p_permission_code IN VARCHAR2
     ) RETURN BOOLEAN IS
         l_count     NUMBER(10);
-        l_username  ph_sec_users.email%TYPE := normalize_username(p_username);
+        l_username  ph_sec_users.email%TYPE := LOWER(TRIM(p_username));
     BEGIN
         SELECT COUNT(*)
           INTO l_count
@@ -134,7 +130,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authorization_pkg AS
         p_page_id  IN NUMBER
     ) RETURN BOOLEAN IS
         l_count     NUMBER(10);
-        l_username  ph_sec_users.email%TYPE := normalize_username(p_username);
+        l_username  ph_sec_users.email%TYPE := LOWER(TRIM(p_username));
     BEGIN
         IF p_app_id IS NULL OR p_page_id IS NULL THEN
             RETURN FALSE;

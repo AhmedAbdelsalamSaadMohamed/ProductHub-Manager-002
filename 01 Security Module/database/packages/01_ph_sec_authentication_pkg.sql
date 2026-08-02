@@ -147,19 +147,7 @@ END ph_sec_authentication_pkg;
 /
 
 CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_pkg AS
-    FUNCTION normalize_username (
-        p_username IN VARCHAR2
-    ) RETURN VARCHAR2 IS
-    BEGIN
-        RETURN LOWER(TRIM(p_username));
-    END normalize_username;
 
-    FUNCTION normalize_preference_code (
-        p_preference_code IN VARCHAR2
-    ) RETURN VARCHAR2 IS
-    BEGIN
-        RETURN UPPER(TRIM(p_preference_code));
-    END normalize_preference_code;
 
     FUNCTION epoch_seconds RETURN NUMBER IS
     BEGIN
@@ -404,7 +392,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_pkg AS
         SELECT user_id
           INTO l_user_id
           FROM ph_sec_users
-         WHERE LOWER(email) = normalize_username(p_username)
+         WHERE LOWER(email) = LOWER(TRIM(p_username))
            AND is_deleted = 0;
 
         RETURN l_user_id;
@@ -419,7 +407,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_pkg AS
         p_default_value   IN VARCHAR2 DEFAULT NULL
     ) RETURN VARCHAR2 IS
         l_user_id         ph_sec_users.user_id%TYPE := get_user_record_id(p_username);
-        l_preference_code ph_sec_user_preferences.preference_code%TYPE := normalize_preference_code(p_preference_code);
+        l_preference_code ph_sec_user_preferences.preference_code%TYPE := UPPER(TRIM(p_preference_code));
         l_value           ph_sec_user_preferences.preference_value%TYPE;
     BEGIN
         IF l_user_id IS NULL OR l_preference_code IS NULL THEN
@@ -435,7 +423,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_pkg AS
            AND is_deleted = 0;
 
         IF l_preference_code = 'LANGUAGE' THEN
-            RETURN ph_localization_pkg.normalize_language(COALESCE(l_value, p_default_value));
+            RETURN ph_localization_pkg.normalize_code(COALESCE(l_value, p_default_value));
         END IF;
 
         RETURN COALESCE(l_value, p_default_value);
@@ -541,7 +529,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_pkg AS
         SELECT COUNT(*)
           INTO l_count
           FROM ph_sec_users
-         WHERE LOWER(email) = normalize_username(p_username)
+         WHERE LOWER(email) = LOWER(TRIM(p_username))
            AND is_active = 1
            AND is_deleted = 0;
 
@@ -563,7 +551,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_pkg AS
         SELECT must_change_password
           INTO l_must_change
           FROM ph_sec_users
-         WHERE LOWER(email) = normalize_username(p_username)
+         WHERE LOWER(email) = LOWER(TRIM(p_username))
            AND is_deleted = 0;
 
         RETURN l_must_change = 1;
@@ -578,7 +566,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_pkg AS
     BEGIN
         UPDATE ph_sec_users
            SET last_login_at = SYSTIMESTAMP
-         WHERE LOWER(email) = normalize_username(p_username)
+         WHERE LOWER(email) = LOWER(TRIM(p_username))
            AND is_deleted = 0;
     END register_success_login;
 
@@ -588,7 +576,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_pkg AS
     BEGIN
         UPDATE ph_sec_users
            SET is_active = 0
-         WHERE LOWER(email) = normalize_username(p_username)
+         WHERE LOWER(email) = LOWER(TRIM(p_username))
            AND is_deleted = 0;
     END lock_user;
 
@@ -598,7 +586,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_pkg AS
     BEGIN
         UPDATE ph_sec_users
            SET is_active = 1
-         WHERE LOWER(email) = normalize_username(p_username)
+         WHERE LOWER(email) = LOWER(TRIM(p_username))
            AND is_deleted = 0;
     END unlock_user;
 
@@ -616,7 +604,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_pkg AS
         SELECT password_hash, password_salt
           INTO l_password_hash, l_password_salt
           FROM ph_sec_users
-         WHERE LOWER(email) = normalize_username(p_username)
+         WHERE LOWER(email) = LOWER(TRIM(p_username))
            AND is_active = 1
            AND is_deleted = 0;
 
@@ -661,7 +649,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_pkg AS
         SELECT user_id, customer_id, email
           INTO o_user_id, o_customer_id, l_username
           FROM ph_sec_users
-         WHERE LOWER(email) = normalize_username(p_username)
+         WHERE LOWER(email) = LOWER(TRIM(p_username))
            AND is_active = 1
            AND is_deleted = 0;
 
@@ -824,7 +812,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_pkg AS
         SELECT user_id
           INTO l_user_id
           FROM ph_sec_users
-         WHERE LOWER(email) = normalize_username(p_username)
+         WHERE LOWER(email) = LOWER(TRIM(p_username))
            AND is_active = 1
            AND is_deleted = 0;
 

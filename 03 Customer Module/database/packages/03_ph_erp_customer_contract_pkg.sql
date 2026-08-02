@@ -1,4 +1,4 @@
-﻿/*
+/*
 ProductHub Manager - Customer and Contract Management Package
 Target DBMS: Oracle Database 21c+
 */
@@ -19,31 +19,37 @@ CREATE OR REPLACE PACKAGE ph_erp_customer_contract_pkg AS
     -- Create/update/delete/restore operations
     ----------------------------------------------------------------------
     PROCEDURE create_customer(p_customer_name IN VARCHAR2, p_legal_name IN VARCHAR2 DEFAULT NULL, p_contact_email IN VARCHAR2 DEFAULT NULL, p_contact_phone IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_customer_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_customer(p_customer_name IN VARCHAR2, p_legal_name IN VARCHAR2 DEFAULT NULL, p_contact_email IN VARCHAR2 DEFAULT NULL, p_contact_phone IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_customer_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_customer(p_customer_id IN NUMBER, p_customer_name IN VARCHAR2 DEFAULT NULL, p_legal_name IN VARCHAR2 DEFAULT NULL, p_contact_email IN VARCHAR2 DEFAULT NULL, p_contact_phone IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_customer(p_customer_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_customer(p_customer_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_customer_user(p_customer_id IN NUMBER, p_email IN VARCHAR2, p_display_name IN VARCHAR2, p_is_initial_admin IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_user_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_customer_user(p_customer_id IN NUMBER, p_email IN VARCHAR2, p_display_name IN VARCHAR2, p_is_initial_admin IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_user_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_customer_user(p_user_id IN NUMBER, p_customer_id IN NUMBER, p_email IN VARCHAR2 DEFAULT NULL, p_display_name IN VARCHAR2 DEFAULT NULL, p_is_initial_admin IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_customer_user(p_user_id IN NUMBER, p_customer_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_customer_user(p_user_id IN NUMBER, p_customer_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_contract(p_contract_no IN VARCHAR2, p_customer_id IN NUMBER, p_product_id IN NUMBER, p_start_date IN DATE, p_end_date IN DATE DEFAULT NULL, p_payment_cycle IN NUMBER, p_notes_en IN VARCHAR2 DEFAULT NULL, p_notes_ar IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_contract_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_contract(p_contract_no IN VARCHAR2, p_customer_id IN NUMBER, p_product_id IN NUMBER, p_start_date IN DATE, p_end_date IN DATE DEFAULT NULL, p_payment_cycle IN NUMBER, p_notes_en IN VARCHAR2 DEFAULT NULL, p_notes_ar IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_contract_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_contract(p_contract_id IN NUMBER, p_contract_no IN VARCHAR2 DEFAULT NULL, p_customer_id IN NUMBER DEFAULT NULL, p_product_id IN NUMBER DEFAULT NULL, p_start_date IN DATE DEFAULT NULL, p_end_date IN DATE DEFAULT NULL, p_payment_cycle IN NUMBER DEFAULT NULL, p_notes_en IN VARCHAR2 DEFAULT NULL, p_notes_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_contract(p_contract_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_contract(p_contract_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_contract_url(p_contract_id IN NUMBER, p_access_url IN VARCHAR2, p_is_primary IN NUMBER DEFAULT 1, p_created_by IN NUMBER DEFAULT NULL, p_contract_url_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_contract_url(p_contract_id IN NUMBER, p_access_url IN VARCHAR2, p_is_primary IN NUMBER DEFAULT 1, p_created_by IN NUMBER DEFAULT NULL, p_contract_url_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_contract_url(p_contract_url_id IN NUMBER, p_access_url IN VARCHAR2 DEFAULT NULL, p_is_primary IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_contract_url(p_contract_url_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_contract_url(p_contract_url_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_effective_from IN DATE DEFAULT NULL, p_effective_to IN DATE DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
 
     PROCEDURE create_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_agreed_price IN NUMBER DEFAULT NULL, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
+    PROCEDURE put_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_agreed_price IN NUMBER DEFAULT NULL, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE update_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_agreed_price IN NUMBER DEFAULT NULL, p_effective_from IN DATE DEFAULT NULL, p_effective_to IN DATE DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE delete_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
     PROCEDURE restore_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_updated_by IN NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2);
@@ -1061,6 +1067,24 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
             set_error(p_result_code, p_result_message);
     END create_customer;
 
+    PROCEDURE put_customer(p_customer_name IN VARCHAR2, p_legal_name IN VARCHAR2 DEFAULT NULL, p_contact_email IN VARCHAR2 DEFAULT NULL, p_contact_phone IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_customer_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_customer_id NUMBER;
+    BEGIN
+        SELECT MIN(customer_id) INTO l_customer_id
+          FROM ph_erp_customers
+         WHERE customer_name = TRIM(p_customer_name);
+
+        IF l_customer_id IS NOT NULL THEN
+            p_customer_id := l_customer_id;
+            restore_customer(l_customer_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_customer(l_customer_id, p_customer_name, p_legal_name, p_contact_email, p_contact_phone, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_customer(p_customer_name, p_legal_name, p_contact_email, p_contact_phone, p_created_by, p_customer_id, p_result_code, p_result_message);
+    END put_customer;
+
     PROCEDURE update_customer(p_customer_id IN NUMBER, p_customer_name IN VARCHAR2 DEFAULT NULL, p_legal_name IN VARCHAR2 DEFAULT NULL, p_contact_email IN VARCHAR2 DEFAULT NULL, p_contact_phone IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
     BEGIN
         do_update_customer(p_customer_id, p_customer_name, p_legal_name, p_contact_email, p_contact_phone, p_is_active, p_updated_by);
@@ -1121,6 +1145,24 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
             set_error(p_result_code, p_result_message);
     END create_customer_user;
 
+    PROCEDURE put_customer_user(p_customer_id IN NUMBER, p_email IN VARCHAR2, p_display_name IN VARCHAR2, p_is_initial_admin IN NUMBER DEFAULT 0, p_created_by IN NUMBER DEFAULT NULL, p_user_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_user_id NUMBER;
+    BEGIN
+        SELECT MIN(user_id) INTO l_user_id
+          FROM ph_sec_users
+         WHERE email = LOWER(TRIM(p_email));
+
+        IF l_user_id IS NOT NULL THEN
+            p_user_id := l_user_id;
+            restore_customer_user(l_user_id, p_customer_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_customer_user(l_user_id, p_customer_id, p_email, p_display_name, p_is_initial_admin, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_customer_user(p_customer_id, p_email, p_display_name, p_is_initial_admin, p_created_by, p_user_id, p_result_code, p_result_message);
+    END put_customer_user;
+
     PROCEDURE update_customer_user(p_user_id IN NUMBER, p_customer_id IN NUMBER, p_email IN VARCHAR2 DEFAULT NULL, p_display_name IN VARCHAR2 DEFAULT NULL, p_is_initial_admin IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
     BEGIN
         do_update_customer_user(p_user_id, p_customer_id, p_email, p_display_name, p_is_initial_admin, p_is_active, p_updated_by);
@@ -1169,6 +1211,24 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_contract;
+
+    PROCEDURE put_contract(p_contract_no IN VARCHAR2, p_customer_id IN NUMBER, p_product_id IN NUMBER, p_start_date IN DATE, p_end_date IN DATE DEFAULT NULL, p_payment_cycle IN NUMBER, p_notes_en IN VARCHAR2 DEFAULT NULL, p_notes_ar IN VARCHAR2 DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_contract_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_contract_id NUMBER;
+    BEGIN
+        SELECT MIN(contract_id) INTO l_contract_id
+          FROM ph_erp_contracts
+         WHERE contract_no = TRIM(p_contract_no);
+
+        IF l_contract_id IS NOT NULL THEN
+            p_contract_id := l_contract_id;
+            restore_contract(l_contract_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_contract(l_contract_id, p_contract_no, p_customer_id, p_product_id, p_start_date, p_end_date, p_payment_cycle, p_notes_en, p_notes_ar, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_contract(p_contract_no, p_customer_id, p_product_id, p_start_date, p_end_date, p_payment_cycle, p_notes_en, p_notes_ar, p_created_by, p_contract_id, p_result_code, p_result_message);
+    END put_contract;
 
     PROCEDURE update_contract(p_contract_id IN NUMBER, p_contract_no IN VARCHAR2 DEFAULT NULL, p_customer_id IN NUMBER DEFAULT NULL, p_product_id IN NUMBER DEFAULT NULL, p_start_date IN DATE DEFAULT NULL, p_end_date IN DATE DEFAULT NULL, p_payment_cycle IN NUMBER DEFAULT NULL, p_notes_en IN VARCHAR2 DEFAULT NULL, p_notes_ar IN VARCHAR2 DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
     BEGIN
@@ -1219,6 +1279,25 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_contract_url;
+
+    PROCEDURE put_contract_url(p_contract_id IN NUMBER, p_access_url IN VARCHAR2, p_is_primary IN NUMBER DEFAULT 1, p_created_by IN NUMBER DEFAULT NULL, p_contract_url_id OUT NUMBER, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+        l_contract_url_id NUMBER;
+    BEGIN
+        SELECT MIN(contract_url_id) INTO l_contract_url_id
+          FROM ph_erp_contract_urls
+         WHERE contract_id = p_contract_id
+           AND access_url = TRIM(p_access_url);
+
+        IF l_contract_url_id IS NOT NULL THEN
+            p_contract_url_id := l_contract_url_id;
+            restore_contract_url(l_contract_url_id, p_created_by, p_result_code, p_result_message);
+            IF p_result_code <> 'S' THEN RETURN; END IF;
+            update_contract_url(l_contract_url_id, p_access_url, p_is_primary, 1, p_created_by, p_result_code, p_result_message);
+            RETURN;
+        END IF;
+
+        create_contract_url(p_contract_id, p_access_url, p_is_primary, p_created_by, p_contract_url_id, p_result_code, p_result_message);
+    END put_contract_url;
 
     PROCEDURE update_contract_url(p_contract_url_id IN NUMBER, p_access_url IN VARCHAR2 DEFAULT NULL, p_is_primary IN NUMBER DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
     BEGIN
@@ -1275,6 +1354,11 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_contract_module;
+
+    PROCEDURE put_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+    BEGIN
+        create_contract_module(p_contract_id, p_product_id, p_module_id, p_effective_from, p_effective_to, p_created_by, p_result_code, p_result_message);
+    END put_contract_module;
 
     PROCEDURE update_contract_module(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_effective_from IN DATE DEFAULT NULL, p_effective_to IN DATE DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
     BEGIN
@@ -1359,6 +1443,11 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
         WHEN OTHERS THEN
             set_error(p_result_code, p_result_message);
     END create_contract_feature;
+
+    PROCEDURE put_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_agreed_price IN NUMBER DEFAULT NULL, p_effective_from IN DATE DEFAULT TRUNC(SYSDATE), p_effective_to IN DATE DEFAULT NULL, p_created_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
+    BEGIN
+        create_contract_feature(p_contract_id, p_product_id, p_module_id, p_platform_id, p_feature_id, p_agreed_price, p_effective_from, p_effective_to, p_created_by, p_result_code, p_result_message);
+    END put_contract_feature;
 
     PROCEDURE update_contract_feature(p_contract_id IN NUMBER, p_product_id IN NUMBER, p_module_id IN NUMBER, p_platform_id IN NUMBER, p_feature_id IN NUMBER, p_agreed_price IN NUMBER DEFAULT NULL, p_effective_from IN DATE DEFAULT NULL, p_effective_to IN DATE DEFAULT NULL, p_is_active IN NUMBER DEFAULT NULL, p_updated_by IN NUMBER DEFAULT NULL, p_result_code OUT VARCHAR2, p_result_message OUT VARCHAR2) IS
     BEGIN
@@ -1462,4 +1551,3 @@ CREATE OR REPLACE PACKAGE BODY ph_erp_customer_contract_pkg AS
     END require_valid_contract_feature;
 END ph_erp_customer_contract_pkg;
 /
-

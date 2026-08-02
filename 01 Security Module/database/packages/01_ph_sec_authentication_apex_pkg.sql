@@ -1,4 +1,4 @@
-﻿/*
+/*
 ProductHub Manager - APEX Security Authentication Package
 Target DBMS: Oracle Database 21c+
 
@@ -23,26 +23,22 @@ END ph_sec_authentication_apex_pkg;
 /
 
 CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_apex_pkg AS
-    FUNCTION normalize_username(p_username IN VARCHAR2) RETURN VARCHAR2 IS
-    BEGIN
-        RETURN LOWER(TRIM(p_username));
-    END normalize_username;
 
     FUNCTION current_apex_username RETURN VARCHAR2 IS
         l_username VARCHAR2(255);
     BEGIN
-        l_username := normalize_username(COALESCE(
+        l_username := LOWER(TRIM(COALESCE(
         APEX_APPLICATION.G_USER,
         V('P9999_USERNAME'),
         V('P101_USERNAME'),
         V('APP_USER')
-        ));
+        )));
 
         IF l_username IN ('nobody', 'apex_public_user') THEN
-            l_username := normalize_username(COALESCE(
+            l_username := LOWER(TRIM(COALESCE(
             V('P9999_USERNAME'),
             V('P101_USERNAME')
-            ));
+            )));
         END IF;
 
         RETURN l_username;

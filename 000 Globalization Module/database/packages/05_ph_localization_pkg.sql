@@ -7,31 +7,13 @@
 */
 
 CREATE OR REPLACE PACKAGE ph_localization_pkg AS
-    FUNCTION normalize_language(p_language IN VARCHAR2) RETURN VARCHAR2;
-
-    FUNCTION current_language RETURN VARCHAR2;
+    FUNCTION normalize_code(p_language IN VARCHAR2) RETURN VARCHAR2;
 
     FUNCTION current_language (
-        p_user_id IN NUMBER
-    ) RETURN VARCHAR2;
-
-    FUNCTION get_user_default_language (
-        p_user_id IN NUMBER
+        p_user_id IN NUMBER default null
     ) RETURN VARCHAR2;
 
     PROCEDURE set_language (
-        p_language IN VARCHAR2
-    );
-
-    PROCEDURE set_language (
-        p_user_id        IN NUMBER,
-        p_language       IN VARCHAR2,
-        p_updated_by     IN NUMBER DEFAULT NULL,
-        p_result_code    OUT VARCHAR2,
-        p_result_message OUT VARCHAR2
-    );
-
-    PROCEDURE set_user_default_language (
         p_user_id        IN NUMBER,
         p_language       IN VARCHAR2,
         p_updated_by     IN NUMBER DEFAULT NULL,
@@ -111,7 +93,7 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
             ROLLBACK;
     END log_error;
 
-    FUNCTION normalize_language(p_language IN VARCHAR2) RETURN VARCHAR2 IS
+    FUNCTION normalize_code(p_language IN VARCHAR2) RETURN VARCHAR2 IS
         l_language VARCHAR2(50) := LOWER(TRIM(REPLACE(p_language, '_', '-')));
         l_base_language VARCHAR2(20);
         l_count NUMBER(10);
@@ -131,7 +113,7 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
                     RETURN 'en';
                 WHEN OTHERS THEN
                     log_error(
-                        p_program_unit => $$PLSQL_UNIT || '.normalize_language',
+                        p_program_unit => $$PLSQL_UNIT || '.normalize_code',
                         p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
                         p_error_code => SQLCODE,
                         p_error_message => SQLERRM,
@@ -169,7 +151,7 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
         EXCEPTION
             WHEN OTHERS THEN
                 log_error(
-                    p_program_unit => $$PLSQL_UNIT || '.normalize_language',
+                    p_program_unit => $$PLSQL_UNIT || '.normalize_code',
                     p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
                     p_error_code => SQLCODE,
                     p_error_message => SQLERRM,
@@ -180,29 +162,7 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
         END;
 
         RETURN 'en';
-    END normalize_language;
-
-    FUNCTION current_language RETURN VARCHAR2 IS
-        l_language VARCHAR2(20);
-    BEGIN
-        l_language := ph_app_defaults_pkg.get_default_code(
-            p_default_key  => 'LANGUAGE',
-            p_default_code => NULL
-        );
-
-        RETURN normalize_language(l_language);
-    EXCEPTION
-        WHEN OTHERS THEN
-            log_error(
-                p_program_unit => $$PLSQL_UNIT || '.current_language',
-                p_error_location => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,
-                p_error_code => SQLCODE,
-                p_error_message => SQLERRM,
-                p_error_stack => DBMS_UTILITY.FORMAT_ERROR_STACK,
-                p_error_backtrace => DBMS_UTILITY.FORMAT_ERROR_BACKTRACE
-            );
-            RETURN normalize_language(NULL);
-    END current_language;
+    END normalize_code;
 
     FUNCTION current_language (
         p_user_id IN NUMBER
@@ -210,7 +170,10 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
         l_language VARCHAR2(4000);
     BEGIN
         IF p_user_id IS NULL THEN
-            RETURN current_language;
+            RETURN ph_app_defaults_pkg.get_default_code(
+            p_default_key  => 'LANGUAGE',
+            p_default_code => NULL
+        );
         END IF;
 
         l_language := ph_sec_management_pkg.get_user_preference(
@@ -218,7 +181,13 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
             p_preference_code => 'LANGUAGE',
             p_default_value   => NULL
         );
-        RETURN normalize_language(l_language);
+        if l_language is null then
+          RETURN ph_app_defaults_pkg.get_default_code(
+            p_default_key  => 'LANGUAGE',
+            p_default_code => NULL
+        );
+        end if;
+        RETURN normalize_code(l_language);
     EXCEPTION
         WHEN OTHERS THEN
             log_error(
@@ -233,37 +202,6 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
             RETURN current_language;
     END current_language;
 
-    FUNCTION get_user_default_language (
-        p_user_id IN NUMBER
-    ) RETURN VARCHAR2 IS
-    BEGIN
-        RETURN current_language(p_user_id);
-    END get_user_default_language;
-
-    PROCEDURE set_language (
-        p_language IN VARCHAR2
-    ) IS
-    BEGIN
-        NULL;
-    END set_language;
-
-    PROCEDURE set_user_default_language (
-        p_user_id        IN NUMBER,
-        p_language       IN VARCHAR2,
-        p_updated_by     IN NUMBER DEFAULT NULL,
-        p_result_code    OUT VARCHAR2,
-        p_result_message OUT VARCHAR2
-    ) IS
-    BEGIN
-        set_language(
-            p_user_id        => p_user_id,
-            p_language       => p_language,
-            p_updated_by     => p_updated_by,
-            p_result_code    => p_result_code,
-            p_result_message => p_result_message
-        );
-    END set_user_default_language;
-
     PROCEDURE set_language (
         p_user_id        IN NUMBER,
         p_language       IN VARCHAR2,
@@ -271,7 +209,7 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
         p_result_code    OUT VARCHAR2,
         p_result_message OUT VARCHAR2
     ) IS
-        l_language VARCHAR2(20) := normalize_language(p_language);
+        l_language VARCHAR2(20) := normalize_code(p_language);
     BEGIN
         IF p_user_id IS NULL THEN
             p_result_code := 'V';
@@ -279,44 +217,7 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
             RETURN;
         END IF;
 
-        ph_sec_management_pkg.update_user_preference(
-            p_user_id          => p_user_id,
-            p_preference_code  => 'LANGUAGE',
-            p_preference_value => l_language,
-            p_value_type       => 'STRING',
-            p_is_active        => 1,
-            p_updated_by       => p_updated_by,
-            p_result_code      => p_result_code,
-            p_result_message   => p_result_message
-        );
-
-        IF NVL(p_result_code, 'E') = 'S' THEN
-            RETURN;
-        END IF;
-
-        ph_sec_management_pkg.restore_user_preference(
-            p_user_id         => p_user_id,
-            p_preference_code => 'LANGUAGE',
-            p_updated_by      => p_updated_by,
-            p_result_code     => p_result_code,
-            p_result_message  => p_result_message
-        );
-
-        IF NVL(p_result_code, 'E') = 'S' THEN
-            ph_sec_management_pkg.update_user_preference(
-                p_user_id          => p_user_id,
-                p_preference_code  => 'LANGUAGE',
-                p_preference_value => l_language,
-                p_value_type       => 'STRING',
-                p_is_active        => 1,
-                p_updated_by       => p_updated_by,
-                p_result_code      => p_result_code,
-                p_result_message   => p_result_message
-            );
-            RETURN;
-        END IF;
-
-        ph_sec_management_pkg.create_user_preference(
+        ph_sec_management_pkg.put_user_preference(
             p_user_id          => p_user_id,
             p_preference_code  => 'LANGUAGE',
             p_preference_value => l_language,
@@ -345,7 +246,7 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
         p_text_ar  IN VARCHAR2,
         p_language IN VARCHAR2 DEFAULT NULL
     ) RETURN VARCHAR2 IS
-        l_language VARCHAR2(20) := normalize_language(COALESCE(p_language, current_language));
+        l_language VARCHAR2(20) := normalize_code(COALESCE(p_language, current_language));
     BEGIN
         IF l_language = 'ar' THEN
             RETURN COALESCE(p_text_ar, p_text_en);
@@ -362,7 +263,7 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
         p_default_text_ar  IN VARCHAR2 DEFAULT NULL,
         p_language         IN VARCHAR2 DEFAULT NULL
     ) RETURN VARCHAR2 IS
-        l_language VARCHAR2(20) := normalize_language(COALESCE(p_language, current_language));
+        l_language VARCHAR2(20) := normalize_code(COALESCE(p_language, current_language));
         l_text ph_i18n_texts.text_value%TYPE;
     BEGIN
         IF l_language IN ('en', 'ar') THEN
@@ -418,7 +319,7 @@ CREATE OR REPLACE PACKAGE BODY ph_localization_pkg AS
         p_text_value    IN VARCHAR2,
         p_user_id       IN NUMBER DEFAULT NULL
     ) IS
-        l_language VARCHAR2(20) := normalize_language(p_language_code);
+        l_language VARCHAR2(20) := normalize_code(p_language_code);
     BEGIN
         IF l_language IN ('en', 'ar') THEN
             RETURN;

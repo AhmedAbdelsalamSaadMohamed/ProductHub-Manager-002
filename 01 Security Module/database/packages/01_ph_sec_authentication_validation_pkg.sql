@@ -49,15 +49,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_validation_pkg AS
         o_validation_message := p_message;
     END set_invalid;
 
-    FUNCTION normalize_username(p_username IN VARCHAR2) RETURN VARCHAR2 IS
-    BEGIN
-        RETURN LOWER(TRIM(p_username));
-    END normalize_username;
 
-    FUNCTION normalize_preference_code(p_preference_code IN VARCHAR2) RETURN VARCHAR2 IS
-    BEGIN
-        RETURN UPPER(TRIM(p_preference_code));
-    END normalize_preference_code;
 
     FUNCTION user_exists(p_user_id IN NUMBER) RETURN BOOLEAN IS
         l_count NUMBER;
@@ -119,7 +111,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_validation_pkg AS
     ) IS
     BEGIN
         o_user_id := NULL;
-        o_preference_code := normalize_preference_code(p_preference_code);
+        o_preference_code := UPPER(TRIM(p_preference_code));
         o_preference_value := TRIM(p_preference_value);
         o_value_type := UPPER(TRIM(COALESCE(p_value_type, 'STRING')));
 
@@ -127,7 +119,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_validation_pkg AS
             SELECT user_id
               INTO o_user_id
               FROM ph_sec_users
-             WHERE LOWER(email) = normalize_username(p_username)
+             WHERE LOWER(email) = LOWER(TRIM(p_username))
                AND is_deleted = 0;
         EXCEPTION
             WHEN NO_DATA_FOUND THEN
@@ -141,7 +133,7 @@ CREATE OR REPLACE PACKAGE BODY ph_sec_authentication_validation_pkg AS
         END IF;
 
         IF o_preference_code = 'LANGUAGE' THEN
-            o_preference_value := ph_localization_pkg.normalize_language(o_preference_value);
+            o_preference_value := ph_localization_pkg.normalize_code(o_preference_value);
             o_value_type := 'STRING';
         ELSIF o_preference_code = 'THEME_MODE' THEN
             o_preference_value := UPPER(COALESCE(o_preference_value, 'SYSTEM'));
